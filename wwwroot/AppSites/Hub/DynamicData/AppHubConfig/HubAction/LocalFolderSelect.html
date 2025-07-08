@@ -1,0 +1,32 @@
+{{VIEWPLACEHOLDER}}
+
+<div style="position:relative;">
+    <button id="{{$AppFolderSelectRefreshID}}" class="ar-sbutton ar-border" style="position:absolute;right:0px;top:10px;"
+            data-ar-action="refreshViewComponentHtml"
+            data-ar-progress="noprogress"
+            data-ar-response="noresponse"
+            data-ar-appsite="{{$AppSite}}"
+            data-ar-appview="{{$AppView}}"
+            data-ar-component="{{$ViewID}}"
+            data-ar-config="{{$AppFolderSelectConfig}}">
+        &#x2714;
+    </button>
+</div>
+
+<div class="ar-flex-input-wrap ar-border">
+    <select id="{{$AppFolderSelectID}}" class="ar-select ar-flex-item-stretch ar-border">
+        {{@AppFolderList}}
+        <option {{@Selected}}selected="selected" {{ /Selected}} value="{{$AppFolderName}}">{{$AppFolderName}}</option>
+        {{/AppFolderList}}
+        {{^AppFolderList}}
+        <option value="0">No App Folder Found</option>
+        {{/AppFolderList}}
+    </select>
+</div>
+
+
+
+
+
+
+

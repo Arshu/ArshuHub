@@ -1,0 +1,5 @@
+{
+  "AppendSelectOption": false,
+  "AppendSelectText": "Select Folder",
+  "AllowedFolders": "wwwroot"
+}

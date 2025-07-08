@@ -1,0 +1,49 @@
+<tfoot>
+    <tr>
+        <td colspan="4" style="padding:0px;">
+            <div class="ar-flex-content-spaced" title="ViewID={{$ViewID}},ViewParentID={{$ViewParentID}},KeyPath={{$KeyPath}}">
+                <select class="ar-input ar-border" style="width:25px;text-align:center;" id="{{$ViewID}}ItemsPerPage"
+                        data-ar-action="refreshViewComponentHtml"
+                        data-ar-progress="hubMappingItemsPerPageProgress"
+                        data-ar-response="{{$ViewParentID}}Response"
+                        data-ar-appsite="{{$AppSite}}"
+                        data-ar-appview="{{$AppView}}"
+                        data-ar-component="{{$ViewParentID}}"
+                        data-ar-config="hubMapingGetPager" ,
+                        data-current="{'PageNo': '1', 'ItemsPerPage': '{{$ItemsPerPage}}'}">
+                    <option value="2" {{@ItemsPerPage2}} selected="selected" {{ /ItemsPerPage2}}>2</option>
+                    <option value="5" {{@ItemsPerPage5}} selected="selected" {{ /ItemsPerPage5}}>5</option>
+                    <option value="10" {{@ItemsPerPage10}} selected="selected" {{ /ItemsPerPage10}}>10</option>
+                    <option value="25" {{@ItemsPerPage25}} selected="selected" {{ /ItemsPerPage25}}>25</option>
+                    <option value="100" {{@ItemsPerPage100}} selected="selected" {{ /ItemsPerPage100}}>100</option>
+                </select>
+                <div style="padding:12px 0px 0px 0px;font-size:small;text-align:left;">
+                    &nbsp;Items/Page,  <span id="hubMappingItemsPerPageProgress"></span>
+                </div>
+                <div class="ar-flex-item-stretch"></div>
+                <div style="padding:4px 0px 0px 5px;font-size:small;text-align:right;">
+                    {{@MaxNoOfPages('MaxNoOfPages':'> 1')}}
+                    Page {{$PageNo}} / {{$MaxNoOfPages}} <br />of {{$RecordCount}} Items
+                    {{/MaxNoOfPages}}
+                    {{^MaxNoOfPages}}
+                    {{$RecordCount}} Items
+                    {{/MaxNoOfPages}}
+                </div>
+            </div>
+
+        </td>
+    </tr>
+</tfoot>
+
+<script>
+    function hubMapingGetPager() {
+        let pageJson = {};
+
+        pageJson["PageNo"] = '{{$PageNo}}';
+        let selectElm = getElm('{{$ViewID}}ItemsPerPage');
+        let selectedItemsPerPage = parseInt(selectElm.value);
+        pageJson["ItemsPerPage"] = selectedItemsPerPage;
+        
+        return pageJson;
+    }
+</script>

@@ -1,0 +1,16 @@
+{
+  "ComputeMinTime$": "15 Mins",
+  "ComputeMaxTime$": "15 Mins",
+  "BandwidthMinSize$": "100 KB",
+  "BandwidthMaxSize$": "100 KB",
+  "ComputeMinTimeValue$": 15,
+  "ComputeMaxTimeValue$": 15,
+  "BandwidthMinSizeValue$": 100,
+  "BandwidthMaxSizeValue$": 100,
+  "MappingCategoryList": [
+    {
+      "CategoryName": "Default",
+      "CategorySelect": true
+    }
+  ]
+}

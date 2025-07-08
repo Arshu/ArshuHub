@@ -1,0 +1,53 @@
+{{VIEWPLACEHOLDER}}
+
+<span style="font-size:xx-small;text-align:center;">Max Repository Size :<span style="color:red">{{$RepositoryMaxSize}}</span></span>
+<span style="font-size:xx-small;text-align:center;">Max Repository Layer Size :<span style="color:red">{{$RepositoryLayerMaxSize}}</span></span>
+
+<div style="position:relative;">
+    <button id="{{$RepositorySelectRefreshID}}" class="ar-sbutton ar-border" style="position:absolute;right:0px;top:10px;"
+            data-ar-action="refreshViewComponentHtml"
+            data-ar-progress="noprogress"
+            data-ar-response="noresponse"
+            data-ar-appsite="{{$AppSite}}"
+            data-ar-appview="{{$AppView}}"
+            data-ar-component="{{$ViewID}}"
+            data-ar-config="{{$RepositorySelectConfig}}"
+            data-ar-postcall="{{$RepositorySelectAction}}">
+        &#x2714;
+    </button>
+</div>
+
+<div class="ar-flex-input-wrap ar-border">
+    <button style="width: 40px; text-align:center;" class="ar-button ar-border-left" onclick="{{$RepositorySelectID}}openRepositoryUrl('{{$RepositorySelectID}}')">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+            <path d="M11 3a1 1 0 100 2h2.586l-6.293 6.293a1 1 0 101.414 1.414L15 6.414V9a1 1 0 102 0V4a1 1 0 00-1-1h-5z" />
+            <path d="M5 5a2 2 0 00-2 2v8a2 2 0 002 2h8a2 2 0 002-2v-3a1 1 0 10-2 0v3H5V7h3a1 1 0 000-2H5z" />
+        </svg>
+    </button>
+    <select id="{{$RepositorySelectID}}" class="ar-select ar-flex-item-stretch ar-border-right" onchange="{{$RepositorySelectAction}}()">
+        {{@HubRepositoryList}}
+        <option {{@RepositorySelected}}selected="selected" {{ /RepositorySelected}} value="{{$RepositoryValue}}">{{$RepositoryPath}}</option>
+        {{/HubRepositoryList}}
+        {{^HubRepositoryList}}
+        <option value="0">No App Templates Found</option>
+        {{/HubRepositoryList}}
+    </select>
+</div>
+<script>
+    function {{$RepositorySelectID}}openRepositoryUrl(selectElmId) {
+        if (haveElm(selectElmId) == true) {
+            let sourceNameTag = getElm(selectElmId).value;
+            if ((sourceNameTag.trim().length > 0) && (sourceNameTag.trim() != "0"))
+            {
+                const result = sourceNameTag.split(":");
+                let repositoryName = result[0];
+                let url = 'https://' + repositoryName + ".fly.dev";
+                window.open(url, '_blank').focus();
+            }
+        }
+    }
+</script>
+
+
+
+

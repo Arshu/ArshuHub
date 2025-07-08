@@ -1,0 +1,13 @@
+{
+  "OwnerEmail$": "",
+  "OwnerPassword$": "",
+  "TestAppName$": "",
+  "MaxAppCountPerMinute": 1,
+  "MaxAppCountPerHour": 1,
+  "MaxAppCountPerDay": 1,
+  "MaxAppCountPerTeam": 1,
+  "AppCountPerMinute": 0,
+  "AppCountPerHour": 0,
+  "AppCountPerDay": 0,
+  "AppCountPerTeam": 0
+}

@@ -1,0 +1,640 @@
+﻿<div style="margin: 0 auto; position: relative; overflow: hidden; background-color: white;color:black;">
+
+    <fieldset class="ar-border" style="position:relative;margin: 5px; padding-top:15px;">
+        <legend>OCI Hub Info</legend>
+
+        <button class="ar-sbutton ar-border" style="position:absolute;right:0px;top:-10px;height:20px;font-size:xx-small;"
+                onclick="clearFlyUpdateAccessInfo()">
+            &#10060;
+        </button>
+
+        {{HubAccessSelect('HubAccessSelectRefreshID':'flyUpdateAccessSelectRefresh', 'HubAccessSelectID':'flyUpdateAccessSelect', 'HubAccessSelectAction':'flyUpdateAccessAction')}}
+
+        <div class="ar-flex-content-spaced">
+            <label for="appHubFlyUpdateAPIToken" class="ar-flex-item-stretch" onclick="clearAppUpdateAccessInfo();">Fly Token</label>
+        </div>
+        <div class="ar-flex-input-wrap">
+            <input id="appHubFlyUpdateAPIToken" class="ar-input ar-border ar-flex-item-stretch" style="padding-left: 5px;" type="password" placeholder="Your Fly API Token if not stored in Hub Access" value="" />
+        </div>
+        <script type="text/javascript">
+            function clearFlyUpdateAccessInfo() {
+                getElm('appHubFlyUpdateAPIToken').value = ""
+            }
+
+            function GetFlyUpdateHubAccessName()
+            {
+                var elt = getElm('flyUpdateAccessSelect');
+                if (elt.selectedIndex == -1)
+                    return null;
+                return elt.options[elt.selectedIndex].text;
+            }
+            function flyUpdateAccessAction()
+            {
+                 getElm('appHubFlyUpdateAPIToken').value = ""
+            }
+        </script>
+    </fieldset>
+
+    <fieldset class="ar-border" style="position:relative;margin: 5px; padding-top:15px;">
+        <legend>App Owner Info</legend>
+
+        <span style="font-size:xx-small; color:red;display:block;">All Apps are public and can be overwritten/deleted by others unless owner details specified</span>
+
+        <button class="ar-sbutton ar-border" style="position:absolute;right:0px;top:-10px;height:20px;font-size:xx-small;"
+                onclick="getElm('appOwnerID').value =''; getElm('appOwnerPassword').value ='';">
+            &#10060;
+        </button>
+
+        <div class="ar-flex-content-spaced">
+            <label for="flyOwnerID" class="ar-flex-item-stretch" onclick="let idElm = getElm('flyOwnerID'); if (idElm.value =='') {idElm.value ='{{$OwnerEmail}}'} else {idElm.value =''}">Email</label>
+            <label for="flyOwnerPassword" class="ar-flex-item-stretch" onclick="let passElm = getElm('flyOwnerPassword');if (passElm.value =='') {passElm.value = '{{$OwnerPassword}}'} else {passElm.value =''}">Password</label>
+        </div>
+        <div class="ar-flex-input-wrap" style="margin: 5px 0px;position:relative;">
+            <input id="flyOwnerID" class="ar-input ar-border ar-flex-item-stretch " style="padding-left: 5px;" autocomplete="off" type="email" placeholder="App Owner Email" value="" />
+            <div class="ar-flex-item-stretch" style="max-width:5px;"></div>
+            <input id="flyOwnerPassword" class="ar-input ar-border ar-flex-item-stretch " style="padding-left: 5px;" autocomplete="off" type="password" placeholder="App Owner Password" value="" />
+        </div>
+    </fieldset>
+
+    <div class="ar-flex-input-wrap" style="margin: 5px 5px;position:relative;">
+        <label for="showAppAdvancedOptions" style="position:absolute;left:0px;top:8px; text-align: right;font-size:xx-small;">
+            <input id="showAppAdvancedOptions" type="checkbox" title="Show App Options" onclick="toggleElm('appInfoDiv');"> Additional Options
+        </label>
+        <label for="newAppName" style="width:100%;margin: 5px 0px;cursor: pointer;">New App Name</label>
+        <button id="appRefreshAppBtn" class="ar-button ar-border-left" style="background-color: #209cee; width:80px;" onclick="clearFlyAppMessage('doFlyAppResponse'); clearFlyAppDetailsMessage('doFlyAppDetailResponse'); retrieveFlyAppInfo('doAppRefreshProgress', 'doFlyAppResponse',  getElm('newAppName').value, 'appOrganization', 'doCreateFlyAppBtn', 'appRefreshAppBtn', function () { getElm('doCreateFlyAppBtn').removeAttribute('disabled'); getElm('doDeleteFlyAppBtn').removeAttribute('disabled'); } );">
+            Refresh <span id="doAppRefreshProgress"></span>
+        </button>
+        <input id="newAppName" class="ar-input ar-flex-item-stretch ar-border-top-bottom" style="padding-left:5px;" autocomplete="off" type="text" placeholder="New App Name" value="{{$TestAppName}}" />
+        <button id="doDeleteFlyAppBtn" class="ar-button ar-border-right" disabled="disabled" style="background-color: #209cee; width: 80px;" 
+            onclick="clearFlyAppMessage('doFlyAppResponse'); clearFlyAppDetailsMessage('doFlyAppDetailResponse'); deleteFlyApp('doAppDeleteProgress', 'doFlyAppResponse', getElm('flyOwnerID').value, getElm('flyOwnerPassword').value, getElm('newAppName').value, 'doDeleteFlyAppBtn', 'doFlyAppDetailResponse');">
+            Delete <span id="doAppDeleteProgress"></span>
+        </button>
+        <div style="display: flex; /*flex-flow: row wrap;*/ justify-content: space-around; width: 100%; color:orangered; font-size:x-small ">
+            <div>
+                Create Per Team : <span id="createPerTeam">{{$AppCountPerTeam}}</span> (Max : <span id="maxCreatePerTeam">{{$MaxAppCountPerTeam}}</span>)
+            </div>
+            <div>
+                Create per Day : <span id="createPerDay">{{$AppCountPerDay}}</span> (Max :<span id="maxCreatePerDay">{{$MaxAppCountPerDay}}</span>)
+            </div>
+            <div>
+                Create per Hour : <span id="createPerHour">{{$AppCountPerHour}}</span> (Max: <span id="maxCreatePerHour">{{$MaxAppCountPerHour}}</span>)
+            </div>
+            <div>
+                Create per Minute : <span id="createPerMinute">{{$AppCountPerMinute}}</span> (Max: <span id="maxCreatePerMinute">{{$MaxAppCountPerMinute}}</span>)
+            </div>
+        </div>
+    </div>
+
+    <fieldset id="appInfoDiv" class="ar-border" style="display: none; padding: 5px;">
+        <legend>App Info</legend>
+
+        <div class="ar-flex-content-spaced" style="margin: 0px;">
+            <label for="appOrganization" class="ar-flex-item-stretch">Organisation</label>
+            <label for="appNetwork" class="ar-flex-item-stretch">App Network</label>
+        </div>
+
+        <div class="ar-flex-input-wrap" style="margin: 5px 0px;position:relative;">
+            <select id="appOrganization" class="ar-select ar-flex-item-stretch ar-border" style="max-width: 48%; padding-left: 5px;" title="User Org Slug Name">
+                <option value="personal">personal</option>
+            </select>
+            <div class="ar-flex-item-stretch" style="max-width:5px;"></div>
+            <input id="appNetwork" class="ar-button ar-border ar-flex-item-stretch" style="max-width: 48%;" type="text" placeholder="App Network" value="" />
+        </div>
+
+    </fieldset>
+
+    <div id="doFlyAppResponseContainer" class="ar-notification" style="text-align:center;display:none;">
+        <svg fill="currentColor" width="16px" height="16px" viewBox="0 0 32 32" xml:space="preserve"
+             style="position:absolute;left:0px;top:0px;"
+             onclick="toggleElm('doFlyAppDetailResponse')">
+        <g>
+        <path d="M17.962,24.725l1.806,0.096v2.531h-7.534v-2.406l1.045-0.094c0.568-0.063,0.916-0.254,0.916-1.014v-8.801
+                 c0-0.699-0.188-0.92-0.791-0.92l-1.106-0.062v-2.626h5.666L17.962,24.725L17.962,24.725z M15.747,4.648
+                 c1.394,0,2.405,1.047,2.405,2.374c0,1.331-1.014,2.313-2.438,2.313c-1.454,0-2.404-0.982-2.404-2.313
+                 C13.31,5.695,14.26,4.648,15.747,4.648z M16,32C7.178,32,0,24.822,0,16S7.178,0,16,0c8.82,0,16,7.178,16,16S24.82,32,16,32z M16,3
+                 C8.832,3,3,8.832,3,16s5.832,13,13,13s13-5.832,13-13S23.168,3,16,3z" />
+             </g>
+         </svg>
+        <button class="ar-delete" onclick="hideElm('doFlyAppResponseContainer');hideElm('doFlyAppDetailResponse');"></button>
+        <div id="doFlyAppResponse"></div>
+        <div id="doFlyAppResponseWarn"></div>
+    </div>
+
+    <div id="doFlyAppDetailResponse" style="font-size:x-small;text-align:center;display:none;">
+    </div>
+
+    <div class="ar-flex-input-wrap" style="margin: 5px 0px;">
+        <button id="doCreateFlyAppBtn" class="ar-button ar-border" style="background-color: #209cee; width: 200px; height: 40px;margin-right:5px;"
+                disabled="disabled" onclick="createFlyApp('doFlyAppCreateProgress', 'doFlyAppResponse',  getElm('flyOwnerID').value, getElm('flyOwnerPassword').value, getElm('newAppName').value, getElm('appOrganization').value, getElm('appNetwork').value,'doCreateFlyAppBtn', 'doFlyAppDetailResponse')">
+            Create App <span id="doFlyAppCreateProgress"></span>
+        </button>
+    </div>
+
+    <span style="font-size:xx-small; color:red;display:block;">After app creation push Hub Image to App of same name before creating machines for the App</span>
+
+</div>
+
+
+<script type="text/javascript">
+
+    function clearFlyAppMessage(responseElmId) {
+        let responseElm = getElm(responseElmId);
+        let responseContainerElmId = responseElmId + "Container";
+        responseElm.textContent = '';
+        hideElm(responseContainerElmId);
+    }
+
+    function clearFlyAppDetailsMessage(responseElmId) {
+        getElm(responseElmId).innerHTML = '';
+    }
+
+    function retrieveFlyAppInfo(progressElmId, responseElmId, appNameVal, appOrganisationSelectElmId, doCreateAppBtnElmId, doRefreshBtnElmId, successCallback, failureCallback) {
+        let id = window.ajaxid++;
+        let responseElm = getElm(responseElmId);
+        let responseContainerElmId = responseElmId + "Container";
+        responseElm.textContent = '';
+        hideElm(responseContainerElmId);
+
+        let valid = true;
+
+        let hubAccessName = GetFlyUpdateHubAccessName();
+        if (hubAccessName.length == 0) {
+           showText(responseElm, 'Select Hub Access', 'red');
+           valid = false;
+        }
+
+        let apiToken = "";
+        if (haveElm('appHubFlyUpdateAPIToken') == true) {
+            apiToken = getElm('appHubFlyUpdateAPIToken').value;
+        }
+
+        if (valid == true) {
+           if (appNameVal.length == 0) {
+               showText(responseElm, 'App Name Cannot be Empty', 'red');
+               valid = false;
+           }
+        }
+
+        if (valid === true) {
+
+            disableElms();
+            getElm(doRefreshBtnElmId).setAttribute("disabled", true);
+
+            let refreshMode = ""
+            let refreshDomain = "";
+
+            let apiUrl = '/AppApi/HubApi';
+            let apiMethod = 'RetrieveFlyAppInfo';
+
+            let apiParams = {
+                "hubAccessName": hubAccessName,
+                "apiToken": apiToken,
+                "appName" : appNameVal
+            };
+
+            let processReturn = function (result, responseElmId, successCallback) {
+
+                enableElms();
+                let responseElm = getElm(responseElmId);
+
+                if (result.hasOwnProperty('error') === true) {
+                    showText(responseElm, result.error, 'red');
+
+                    getElm(doRefreshBtnElmId).removeAttribute("disabled");
+                }
+                //else if (result.hasOwnProperty('message') === true) {
+                //    showText(responseElm, result.message, 'green');
+
+                //    if (typeof successCallback === "function") {
+                //        successCallback();
+                //    }
+                //}
+                else {
+                    
+                    if (result.hasOwnProperty("OrgList") === true) {
+                        let orgList = result.OrgList;
+
+                        let selectElm = getElm(appOrganisationSelectElmId);
+                        if (selectElm) {
+                            selectElm.options.length = 0;
+
+                            for (var i = 0; i < orgList.length; i++) {
+                                let orgInfo = orgList[i];
+                                let orgName = "";
+                                if (orgInfo.hasOwnProperty('name') === true) {
+                                    orgName = orgInfo.name
+                                }
+                                let orgSlug = "";
+                                if (orgInfo.hasOwnProperty('slug') === true) {
+                                    orgSlug = orgInfo.slug
+                                }
+                                let isPersonal = false;
+                                if (orgSlug == "personal") isPersonal = true;
+
+                                if (isPersonal == true) {
+                                    selectElm.options[selectElm.options.length] = new Option(orgSlug, orgSlug, true, true);
+                                } else {
+                                    selectElm.options[selectElm.options.length] = new Option(orgSlug, orgSlug, false, false);
+                                }
+                            }
+                        }
+
+                    }
+
+                    if (result.hasOwnProperty('AppCountPerTeam') === true) {
+                        getElm('createPerTeam').innerHTML = result.AppCountPerTeam;
+                    }
+                    if (result.hasOwnProperty('MaxAppCountPerTeam') === true) {
+                        getElm('maxCreatePerTeam').innerHTML = result.MaxAppCountPerTeam;
+                    }
+                    if (result.hasOwnProperty('AppCountPerDay') === true) {
+                        getElm('createPerDay').innerHTML = result.AppCountPerDay;
+                    }
+                    if (result.hasOwnProperty('MaxAppCountPerDay') === true) {
+                        getElm('maxCreatePerDay').innerHTML = result.MaxAppCountPerDay;
+                    }
+                    if (result.hasOwnProperty('AppCountPerHour') === true) {
+                        getElm('createPerHour').innerHTML = result.AppCountPerHour;
+                    }
+                    if (result.hasOwnProperty('MaxAppCountPerHour') === true) {
+                        getElm('maxCreatePerHour').innerHTML = result.MaxAppCountPerHour;
+                    }
+                    if (result.hasOwnProperty('AppCountPerMinute') === true) {
+                        getElm('createPerMinute').innerHTML = result.AppCountPerMinute;
+                    }
+                    if (result.hasOwnProperty('MaxAppCountPerMinute') === true) {
+                        getElm('maxCreatePerMinute').innerHTML = result.MaxAppCountPerMinute;
+                    }
+
+                    getElm(doRefreshBtnElmId).removeAttribute("disabled");
+
+                    if (typeof successCallback === "function") {
+                        successCallback();
+                    }
+
+                    if (result.hasOwnProperty("AppNameExists") === true) {
+                        if (result.AppNameExists == true)
+                        {
+                            getElm(doCreateAppBtnElmId).setAttribute("disabled", true);
+                        }
+                    }
+                }
+            };
+
+            callAssemblerApi(progressElmId, responseElmId, apiUrl, apiMethod, apiParams, refreshMode, refreshDomain, processReturn, successCallback, failureCallback, 0, "{{$AppSite}}", "{{$AppView}}", "{{$ViewName}}", "");
+        }
+
+        return false;
+    }
+
+    function createFlyApp(progressElmId, responseElmId, flyOwnerIDVal, flyOwnerPasswordVal, newAppNameVal, newAppOrganizationVal, newAppNetworkVal, doCreateBtnElmId, detailResponseElmId, successCallback, failureCallback) {
+        let id = window.ajaxid++;
+        let responseElm = getElm(responseElmId);
+        let responseContainerElmId = responseElmId + "Container";
+        responseElm.textContent = '';
+        hideElm(responseContainerElmId);
+
+        let responseWarnElmId = responseElmId + "Warn"
+        let responseWarnElm = getElm(responseWarnElmId)
+        responseWarnElm.textContent = '';
+
+        hideElm(detailResponseElmId)
+        let detailResponseElm = getElm(detailResponseElmId)
+        detailResponseElm.textContent = '';
+
+        let valid = true;
+
+        let hubAccessName = GetFlyUpdateHubAccessName();
+        if (hubAccessName.length == 0) {
+           showText(responseElm, 'Select Hub Access', 'red');
+           valid = false;
+        }
+
+        let apiToken = "";
+        if (haveElm('appHubFlyUpdateAPIToken') == true) {
+            apiToken = getElm('appHubFlyUpdateAPIToken').value;
+        }
+
+        if (valid == true) {
+            if (flyOwnerIDVal.length == 0) {
+                showText(responseElm, 'Fly App Owner ID Cannot be Empty', 'red');
+                valid = false;
+            }
+        }
+
+        if (valid == true) {
+            if (flyOwnerPasswordVal.length == 0) {
+                showText(responseElm, 'Fly App Owner Password Cannot be Empty', 'red')
+                valid = false
+            }
+        }
+
+        if (valid == true) {
+           if (newAppNameVal.length == 0) {
+               showText(responseElm, 'New App Name Cannot be Empty', 'red');
+               valid = false;
+           }
+        }
+
+        if (valid == true) {
+            if (newAppOrganizationVal.length == 0) {
+                showText(responseElm, 'New App Organisation Cannot be Empty', 'red');
+                valid = false;
+            }
+        }
+       
+        if (valid === true) {
+
+            getElm(doCreateBtnElmId).setAttribute("disabled", true);
+
+            let refreshMode = ""
+            let refreshDomain = "";
+
+            let apiUrl = '/AppApi/HubApi';
+            let apiMethod = 'CreateFlyApp';
+
+            let apiParams = {
+                "hubAccessName": hubAccessName,
+                "apiToken": apiToken,
+                "appOwnerID": flyOwnerIDVal,
+                "appOwnerPassword": flyOwnerPasswordVal,
+                "newAppName": newAppNameVal,
+                "newAppOrganization": newAppOrganizationVal,
+                "newAppNetwork": newAppNetworkVal
+            };
+
+            let processReturn = function (result, responseElmId, successCallback, failureCallback) {
+
+                let responseElm = getElm(responseElmId);
+
+                if (result.hasOwnProperty('error') === true) {
+                    showText(responseElm, result.error, 'red');
+
+                    getElm(doCreateBtnElmId).removeAttribute("disabled");
+
+                    let detailMessageHtml = "";
+                    let messageNo = 0;
+                    if (result.hasOwnProperty('errorJson') === true) {
+                        let errorJson = result.errorJson;
+                        for (let i = 0; i < errorJson.length; i++) {
+                            messageNo++;
+                            let messageObj = errorJson[i];
+                            for (var key in messageObj) {
+                                if (messageObj.hasOwnProperty(key)) {
+                                    detailMessageHtml = detailMessageHtml + messageNo + " : <span style='color:red'>" + messageObj[key] + "</span><br/>";
+                                }
+                            }
+                        }
+                    }
+                    getElm(detailResponseElmId).innerHTML = detailMessageHtml;
+                    showElm(detailResponseElmId);
+                }
+                else if (result.hasOwnProperty('message') === true) {
+                    showText(responseElm, result.message, 'green');
+
+                    if (result.hasOwnProperty('warn') === true) {
+                        showText(responseWarnElm, result.warn, 'blue')
+                    }
+
+                    let detailMessageHtml = "";
+                    let messageNo = 0;
+                    if (result.hasOwnProperty('messageJson') === true) {
+                        let messageJson = result.messageJson;
+                        for (let i = 0; i < messageJson.length; i++) {
+                            messageNo++;
+                            let messageObj = messageJson[i];
+                            for (var key in messageObj) {
+                                if (messageObj.hasOwnProperty(key)) {
+                                    detailMessageHtml = detailMessageHtml + messageNo + " : <span style='color:green'>" + messageObj[key] + "</span><br/>";
+                                }
+                            }
+                        }
+                    }
+                    if (result.hasOwnProperty('warnJson') === true) {
+                        let messageJson = result.warnJson;
+                        for (let n = 0; n < messageJson.length; n++) {
+                            messageNo++;
+                            let messageObj = messageJson[n];
+                            for (var key in messageObj) {
+                                if (messageObj.hasOwnProperty(key)) {
+                                    detailMessageHtml = detailMessageHtml + messageNo + " : <span style='color:blue'>" + messageObj[key] + "</span><br/>";
+                                }
+                            }
+                        }
+                    }
+                    if (result.hasOwnProperty('errorJson') === true) {
+                        let errorJson = result.errorJson
+                        for (let i = 0; i < errorJson.length; i++) {
+                            messageNo++
+                            let messageObj = errorJson[i]
+                            for (var key in messageObj) {
+                                if (messageObj.hasOwnProperty(key)) {
+                                    detailMessageHtml = detailMessageHtml + messageNo + " : <span style='color:red'>" + messageObj[key] + "</span><br/>"
+                                }
+                            }
+                        }
+                    }
+                    getElm(detailResponseElmId).innerHTML = detailMessageHtml;
+                    //showElm(detailResponseElmId);
+
+                    if (result.hasOwnProperty('cloneAppName') === true) {
+                        let cloneAppName = result["cloneAppName"];
+                        let cloneLinkElm = getElm("cloneLink")
+                        cloneLinkElm.setAttribute("href", "https://" + cloneAppName + ".fly.dev")
+                        cloneLinkElm.textContent = "https://" + cloneAppName + ".fly.dev/Index/CloneUpdate"
+                        showElm("cloneLinkDiv")
+                    }
+
+                    if (typeof successCallback === "function") {
+                        successCallback()
+                    }
+                }
+                else if (result.hasOwnProperty('warn') === true) {
+                    showText(responseElm, result.warn, 'red');
+
+                    if (result.hasOwnProperty('warn') === true) {
+                        showText(responseWarnElm, result.warn, 'blue')
+                    }
+
+                    let detailMessageHtml = "";
+                    let messageNo = 0;
+                    if (result.hasOwnProperty('warnJson') === true) {
+                        let messageJson = result.warnJson;
+                        for (let i = 0; i < messageJson.length; i++) {
+                            messageNo++;
+                            let messageObj = messageJson[i];
+                            for (var key in messageObj) {
+                                if (messageObj.hasOwnProperty(key)) {
+                                    detailMessageHtml = detailMessageHtml + messageNo + " : <span style='color:blue'>" + messageObj[key] + "</span><br/>";
+                                }
+                            }
+                        }
+                    }
+                    if (result.hasOwnProperty('errorJson') === true) {
+                        let errorJson = result.errorJson
+                        for (let i = 0; i < errorJson.length; i++) {
+                            messageNo++
+                            let messageObj = errorJson[i]
+                            for (var key in messageObj) {
+                                if (messageObj.hasOwnProperty(key)) {
+                                    detailMessageHtml = detailMessageHtml + messageNo + " : <span style='color:red'>" + messageObj[key] + "</span><br/>"
+                                }
+                            }
+                        }
+                    }
+                    getElm(detailResponseElmId).innerHTML = detailMessageHtml;
+                    showElm(detailResponseElmId);
+                }
+            };
+
+            callAssemblerApi(progressElmId, responseElmId, apiUrl, apiMethod, apiParams, refreshMode, refreshDomain, processReturn, successCallback, failureCallback, 0, "{{$AppSite}}", "{{$AppView}}", "{{$ViewName}}", "");
+        }
+
+        return false;
+    }
+
+    function deleteFlyApp(progressElmId, responseElmId, appOwnerIDVal, appOwnerPasswordVal, appNameVal, deleteAppBtnElmId, detailResponseElmId, successCallback, failureCallback) {
+        let id = window.ajaxid++
+        let responseElm = getElm(responseElmId)
+        let responseContainerElmId = responseElmId + "Container"
+        responseElm.textContent = ''
+        hideElm(responseContainerElmId)
+
+        let responseWarnElmId = responseElmId + "Warn"
+        let responseWarnElm = getElm(responseWarnElmId)
+        responseWarnElm.textContent = '';
+
+        hideElm(detailResponseElmId)
+        let detailResponseElm = getElm(detailResponseElmId)
+        detailResponseElm.textContent = '';
+
+        let valid = true
+
+        let hubAccessName = GetFlyUpdateHubAccessName();
+        if (hubAccessName.length == 0) {
+           showText(responseElm, 'Select Hub Access', 'red');
+           valid = false;
+        }
+
+        let apiToken = "";
+        if (haveElm('appHubAppUpdateAPIToken') == true) {
+            apiToken = getElm('appHubAppUpdateAPIToken').value;
+        }
+
+        if (valid == true) {
+            if (appOwnerIDVal.length == 0) {
+                showText(responseElm, 'App Owner ID Cannot be Empty', 'red')
+                valid = false
+            }
+        }
+
+        if (valid == true) {
+            if (appOwnerPasswordVal.length == 0) {
+                showText(responseElm, 'App Owner Password Cannot be Empty', 'red')
+                valid = false
+            }
+        }
+
+        if (valid == true) {
+            if (appNameVal.length == 0) {
+                showText(responseElm, 'App Name Cannot be Empty', 'red')
+                valid = false
+            }
+        }
+
+        if (valid === true) {
+
+            getElm(deleteAppBtnElmId).setAttribute("disabled", true)
+
+            let refreshMode = ""
+            let refreshDomain = ""
+
+            let apiUrl = '/AppApi/HubApi'
+            let apiMethod = 'DeleteFlyApp'
+
+            let apiParams = {
+                "hubAccessName": hubAccessName,
+                "apiToken": apiToken,
+                "appOwnerID": appOwnerIDVal,
+                "appOwnerPassword": appOwnerPasswordVal,
+                "appName": appNameVal
+            }
+
+            let processReturn = function (result, responseElmId, successCallback, failureCallback) {
+
+                let responseElm = getElm(responseElmId)
+
+                if (result.hasOwnProperty('error') === true) {
+                    showText(responseElm, result.error, 'red')
+
+                    getElm(deleteAppBtnElmId).removeAttribute("disabled")
+
+                    if (typeof failureCallback === "function") {
+                        failureCallback()
+                    }
+                }
+                else if (result.hasOwnProperty('message') === true) {
+                    showText(responseElm, result.message, 'green')
+
+                    if (result.hasOwnProperty('warn') === true) {
+                        showText(responseWarnElm, result.warn, 'blue')
+                    }
+
+                    let detailMessageHtml = "";
+                    let messageNo = 0;
+                    if (result.hasOwnProperty('messageJson') === true) {
+                        let messageJson = result.messageJson;
+                        for (let i = 0; i < messageJson.length; i++) {
+                            messageNo++;
+                            let messageObj = messageJson[i];
+                            for (var key in messageObj) {
+                                if (messageObj.hasOwnProperty(key)) {
+                                    detailMessageHtml = detailMessageHtml + messageNo + " : <span style='color:green'>" + messageObj[key] + "</span><br/>";
+                                }
+                            }
+                        }
+                    }
+                    if (result.hasOwnProperty('warnJson') === true) {
+                        let messageJson = result.warnJson;
+                        for (let n = 0; n < messageJson.length; n++) {
+                            messageNo++;
+                            let messageObj = messageJson[n];
+                            for (var key in messageObj) {
+                                if (messageObj.hasOwnProperty(key)) {
+                                    detailMessageHtml = detailMessageHtml + messageNo + " : <span style='color:blue'>" + messageObj[key] + "</span><br/>";
+                                }
+                            }
+                        }
+                    }
+                    if (result.hasOwnProperty('errorJson') === true) {
+                        let errorJson = result.errorJson
+                        for (let i = 0; i < errorJson.length; i++) {
+                            messageNo++
+                            let messageObj = errorJson[i]
+                            for (var key in messageObj) {
+                                if (messageObj.hasOwnProperty(key)) {
+                                    detailMessageHtml = detailMessageHtml + messageNo + " : <span style='color:red'>" + messageObj[key] + "</span><br/>"
+                                }
+                            }
+                        }
+                    }
+                    getElm(detailResponseElmId).innerHTML = detailMessageHtml;
+                    //showElm(detailResponseElmId);
+
+                    if (typeof successCallback === "function") {
+                        successCallback()
+                    }
+                }
+            }
+
+            callAssemblerApi(progressElmId, responseElmId, apiUrl, apiMethod, apiParams, refreshMode, refreshDomain, processReturn, successCallback, failureCallback, 0, "{{$AppSite}}", "{{$AppView}}", "{{$ViewName}}", "")
+        }
+
+        return false
+    }
+
+    ready(() => {
+        //triggerEvent('appRefreshAppBtn', 'click')
+    });
+
+</script>

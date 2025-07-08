@@ -1,0 +1,18 @@
+{
+  "ShowHubActions$": true,
+  "ShowFlyActions$": true,
+  "ShowKraftActions$": true,
+  "ShowWSLActions$": true,
+  "RepositoryFolderList": [
+    {
+      "FolderName": "wwwsys",
+      "Selected": true,
+      "SelectedTag": "selected='selected'"
+    },
+    {
+      "FolderName": "wwwroot",
+      "Selected": false,
+      "SelectedTag": ""
+    }
+  ]
+}

@@ -1,0 +1,82 @@
+{
+  "HubApp": [
+    {
+      "IDataType": "HubConfigList",
+      "IDataParamFile": "DynamicData.HubConfigList"
+    }
+  ],
+  "HubAppList": [
+    {
+      "IDataType": "HubMappingList",
+      "IDataParamFile": "DynamicData.HubAppList"
+    }
+  ],
+  "HubAppTemplateSelect": [
+    {
+      "IDataType": "HubAppTemplateList",
+      "IDataParamFile": "DynamicData.HubAppTemplateList"
+    }
+  ],
+  "HubMapping": [
+    {
+      "IDataType": "HubConfigList",
+      "IDataParamFile": "DynamicData.HubConfigList"
+    }
+  ],
+  "HubMappingList": [
+    {
+      "IDataType": "HubMappingList",
+      "IDataParamFile": "DynamicData.HubMappingList"
+    }
+  ],
+  "HubRepositorySelect": [
+    {
+      "IDataType": "HubRepositoryList",
+      "IDataParamFile": "DynamicData.HubRepositoryList"
+    }
+  ],
+  "HubRepositoryFolderSelect": [
+    {
+      "IDataType": "HubRepositoryList",
+      "IDataParamFile": "DynamicData.HubRepositoryList"
+    },
+    {
+      "IDataType": "HubRepositoryFolderList",
+      "IDataParamFile": "DynamicData.HubRepositoryFolderList"
+    }
+  ],
+  "LocalFolderSelect": [
+    {
+      "IDataType": "LocalFolderList",
+      "IDataParamFile": "DynamicData.LocalFolderList"
+    }
+  ],
+  "HubFolderSelect": [
+    {
+      "IDataType": "HubRepositoryList",
+      "IDataParamFile": "DynamicData.HubRepositoryList"
+    },
+    {
+      "IDataType": "HubRepositoryFolderList",
+      "IDataParamFile": "DynamicData.HubFolderSelect"
+    }
+  ],
+  "RepositoryUpload": [
+    {
+      "IDataType": "HubConfigList",
+      "IDataParamFile": "DynamicData.HubConfigList"
+    }
+  ],
+  "RepositoryUploadInit": [
+    {
+      "IDataType": "HubConfigList",
+      "IDataParamFile": "DynamicData.HubConfigList"
+    }
+  ],
+  "FlyMachine": [
+    {
+      "IDataType": "MachineConfigList",
+      "IDataParamFile": "DynamicData.MachineConfigList"
+    }
+  ]
+}

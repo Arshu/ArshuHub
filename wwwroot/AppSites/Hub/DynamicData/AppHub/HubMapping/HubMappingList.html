@@ -1,0 +1,52 @@
+{{VIEWPLACEHOLDER}}
+
+<div style="margin:5px;position:relative;">
+
+    <div style="margin:5px; padding:10px;text-align:center;display:none;" class="ar-notification" id="{{$ViewID}}ResponseContainer">
+        <button class="ar-delete" onclick="hideElm('{{$ViewID}}ResponseContainer')"></button>
+        <div id="{{$ViewID}}Response"></div>
+    </div>
+
+    <table style="width:100%;" class="pure-table pure-table-bordered pure-table-striped">
+        {{HubMappingListHeader}}
+        <tbody>
+            {{@HubMappingList}}
+            <tr style="background-color: gray;">
+                <td style="padding-left: 5px;text-align:center;">
+                    <button class="ar-button ar-border" style="width:100%;" onclick="setMappingDetails('{{$HubMappingDomain}}', '{{$HubRepositoryInfo}}', '{{$HubMappingFolder}}', '{{$HubMappingIsPublic}}', '{{$HubMappingCanDownload}}', '{{$HubMappingEnabled}}', '{{$HubMappingTitle}}', '{{$HubMappingDescription}}')">
+                        {{$HubMappingDomain}}
+                        <div style="font-size:xx-small">
+                            Enabled:{{$HubMappingEnabled}}, IsPublic:{{$HubMappingIsPublic}}
+                        </div>
+                        <div style="font-size:xx-small">
+                            CanDownload: {{$HubMappingCanDownload}}
+                        </div>
+                    </button>
+                </td>
+                <td style="text-align:center;">
+                    {{$HubRepositoryInfo}}
+                    <div style="font-size:xx-small">
+                        {{$HubMappingFolder}}
+                    </div>
+                    <div style="font-size:xx-small; text-align:justify;">
+                        Title: {{$HubMappingTitle}}
+                    </div>
+                    <div style="font-size:xx-small; text-align:justify;">
+                        Description: {{$HubMappingDescription}}
+                    </div>
+                </td>
+            </tr>
+            {{/HubMappingList}}
+            {{^HubMappingList}}
+            <tr style="background-color: gray;">
+                <td colspan="2">
+                    No Hub Mapping Details Found
+                </td>
+            </tr>
+            {{/HubMappingList}}
+        </tbody>
+        {{HubMappingListFooter}}
+    </table>
+
+</div>
+

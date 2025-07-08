@@ -1,0 +1,393 @@
+
+
+<div style="margin:5px;">
+    <div style="position:relative;">
+        <button class="ar-sbutton ar-border" style="position:absolute;right:0px;top:-10px;height:20px;font-size:xx-small;"
+                onclick="clearMappingDetails()">
+            &#10060;
+        </button>
+    </div>
+
+    <div class="ar-flex-content-spaced">
+        <label for="appHubMappingDomain" class="ar-flex-item-stretch" onclick="">Mapping Domain</label>
+    </div>
+    <div class="ar-flex-input-wrap">
+        <input id="appHubMappingDomain" class="ar-input ar-border ar-flex-item-stretch" style="padding-left: 5px;" type="text" placeholder="Your Mapping Domain" value="" />
+    </div>
+
+    <div style="position:relative;">
+        <label for="mappingRepositorySelect" class="ar-flex-item-stretch">Mapping Repository</label>
+        {{HubRepositorySelect('RepositorySelectRefreshID':'mappingRepositorySelectRefresh', 'RepositorySelectID':'mappingRepositorySelect', 'RepositorySelectAction':'mappingRepositorySelectAction', 'RepositorySelectConfig':'mappingRepositorySelectConfig')}}
+    </div>
+
+    <div style="position:relative;">
+        <label for="appHubMappingFolder" class="ar-flex-item-stretch">Mapping Folder</label>
+        {{HubRepositoryFolderSelect('RepositoryFolderSelectRefreshID':'appHubMappingFolderRefresh', 'RepositoryFolderSelectID':'appHubMappingFolder', 'RepositoryFolderSelectType':'', 'RepositoryFolderSelectConfig': 'appHubMappingFolderConfig')}}
+    </div>
+
+    <div class="ar-flex-content-wrap">
+
+        <label class="ar-flex-item-stretch" style="margin: 5px 0px; text-align: center">
+            Is Public
+            <input id="appHubMappingIsPublic" type="checkbox" title="The Mapping is Public" style="margin-left: 5px;">
+        </label>
+
+        <label class="ar-flex-item-stretch" style="margin: 5px 0px; text-align: center">
+            Can Download
+            <input id="appHubMappingCanDownload" type="checkbox" title="The Mapping Repository Can be Downloaded" style="margin-left: 5px;">
+        </label>
+
+        <label class="ar-flex-item-stretch" style="margin: 5px 0px; text-align: center">
+            Is Enabled
+            <input id="appHubMappingEnabled" type="checkbox" title="Enable the Mapping" style="margin-left: 5px;" checked="checked">
+        </label>
+
+    </div>
+
+    <div class="ar-flex-content-spaced">
+        <label for="appHubMappingTitle" class="ar-flex-item-stretch">Mapping Title</label>
+    </div>
+    <div class="ar-flex-input-wrap">
+        <input id="appHubMappingTitle" class="ar-input ar-border ar-flex-item-stretch" style="padding-left: 5px;" type="text" placeholder="Your Mapping Title" value="" />
+    </div>
+    <span style="font-size:xx-small;color:blue;">Title and Description are Mandatory for Public Mappings</span>
+    <div class="ar-flex-content-spaced">
+        <label for="appHubMappingDescription" class="ar-flex-item-stretch">Mapping Description</label>
+    </div>
+    <div class="ar-flex-input-wrap">
+        <textarea rows="5" id="appHubMappingDescription" class="ar-input ar-border ar-flex-item-stretch" style="padding-left: 5px;" placeholder="Your Mapping Description"></textarea>
+    </div>
+
+    <div class="ar-flex-content-spaced" style="margin: 0px;">
+        <label for="appHubMappingCategory" class="ar-flex-item-stretch">Mapping Category</label>
+    </div>
+    <div class="ar-flex-content-spaced" style="margin: 5px; padding: 0px;">
+        <select id="appHubMappingCategory" class="ar-select ar-flex-item-stretch ar-border" style="padding-left:5px;" title="Machine Config List">
+            {{@MappingCategoryList}}
+            <option {{@CategorySelect}} selected="selected" {{ /CategorySelect}} value="{{$CategoryName}}">{{$CategoryName}}</option>
+            {{/MappingCategoryList}}
+        </select>
+    </div>
+
+    <div class="ar-notification" id="appHubMappingResponseContainer" style="margin:10px; padding:10px;display:none;">
+        <button class="ar-delete" onclick="hideElm('appHubMappingResponseContainer')"></button>
+        <div id="appHubMappingResponse"></div>
+    </div>
+
+    <div class="ar-flex-content-wrap" style="margin-top:10px;">
+
+        <button id="appHubMappingSaveBtn" class="ar-button ar-border ar-flex-item-stretch" style="text-align: center; font-weight: bolder; color: black;"
+                onclick="appHubMappingSave('appHubMappingSaveProgress', 'appHubMappingResponse', getElm('appHubMappingDomain').value, getElm('mappingRepositorySelect').value, getElm('appHubMappingFolder').value, getElm('appHubMappingIsPublic').checked, getElm('appHubMappingCanDownload').checked, getElm('appHubMappingEnabled').checked, getElm('appHubMappingTitle').value, getElm('appHubMappingDescription').value, getElm('appHubMappingCategory').value, 'appHubMappingSaveBtn')">
+            Save Mapping <span id="appHubMappingSaveProgress"></span>
+        </button>
+        <div style="width:5px;">
+        </div>
+        <button id="appHubMappingDeleteBtn" class="ar-button ar-border ar-flex-item-stretch" style="text-align: center; font-weight: bolder; color: black;"
+                onclick="appHubMappingDelete('appHubMappingDeleteProgress', 'appHubMappingResponse', getElm('appHubMappingDomain').value, getElm('mappingRepositorySelect').value, getElm('appHubMappingFolder').value, 'appHubMappingDeleteBtn')">
+            Delete Mapping <span id="appHubMappingDeleteProgress"></span>
+        </button>
+
+    </div>
+</div>
+
+{{@HaveAdminRole}}
+    {{HubMappingList}}
+{{/HaveAdminRole}}
+
+<script type="text/javascript">
+
+    function openMappingUrl(mappingDomainName)
+    {
+        if ((mappingDomainName.trim().length > 0) && (mappingDomainName.indexOf(".") > -1))
+        {
+            if (window.location.hostname.toLowerCase() == 'localhost')
+            {
+                let url = window.location.href;
+                if (url.endsWith("/") ==true)
+                {
+                    url = url + "reload";
+                }else
+                {
+                    url = url + "/reload";
+                }
+                window.open(url, '_blank');
+            }
+            else
+            {
+                let host = window.location.host
+                let hostArr = host.split('.')
+                if (hostArr.length == 2)
+                {
+                    let url = window.location.protocol + "//" + mappingDomainName;
+                    if ((window.location.port != 80) && (window.location.port != 443))
+                    {
+                        url = url + ":" + window.location.port;
+                    }
+                    window.open(url, '_blank');
+                }
+                else if (hostArr.length == 3)
+                {
+                    //let url = window.location.protocol + "//" + mappingDomainName.trim() + "." + hostArr[1] + "." + hostArr[2];
+                    let url = window.location.protocol + "//" + mappingDomainName;
+                    if ((window.location.port != 80) && (window.location.port != 443))
+                    {
+                        url = url + ":" + window.location.port;
+                    }
+                    window.open(url, '_blank');
+                }
+            }
+        }
+    }
+
+    function mappingRepositorySelectAction()
+    {
+        let selectElm = getElm('mappingRepositorySelect');
+        let sourceNameTag = selectElm.value;
+        if ((sourceNameTag.trim().length > 0) && (sourceNameTag.trim() != "0"))
+        {
+            triggerEvent('appHubMappingFolderRefresh', 'click');
+        }
+    }
+
+    function mappingRepositorySelectConfig()
+    {
+        let selectElm = getElm('mappingRepositorySelect');
+        let sourceNameTag = selectElm.value;
+        return {"SelectedRepositoryPath": sourceNameTag};
+    }
+
+    function appHubMappingFolderConfig()
+    {
+        let selectElm = getElm('mappingRepositorySelect');
+        let sourceNameTag = selectElm.value;
+        return {"SelectedRepositoryPath": sourceNameTag};
+    }
+
+    function clearMappingDetails() {
+        getElm('appHubMappingDomain').value = ""
+        getElm('mappingRepositorySelect').selectedIndex = 0
+        getElm('appHubMappingFolder').selectedIndex = 0
+        getElm('appHubMappingIsPublic').checked = false
+        getElm('appHubMappingCanDownload').checked = false
+        getElm('appHubMappingEnabled').checked = false
+        getElm('appHubMappingTitle').value = ""
+        getElm('appHubMappingDescription').value = ""
+        getElm('appHubMappingCategory').selectedIndex = 0;
+    }
+
+    function setMappingDetails(hubMappingDomain, hubRepositoryInfo, hubMappingFolder, hubMappingIsPublic, hubMappingCanDownload, hubMappingEnabled, hubMappingTitle, hubMappingDescription) {
+
+        getElm('appHubMappingDomain').value = hubMappingDomain
+        getElm('mappingRepositorySelect').value = hubRepositoryInfo
+        mappingRepositorySelectAction();
+
+        let folderTimerCount = 0;
+        let folderSetIntervalID = setInterval(() => {
+            folderTimerCount++;
+            let currentFolderVal = getElm('appHubMappingFolder').value;
+            if ((currentFolderVal.trim().length > 0) && (currentFolderVal.trim() != "0"))
+            {
+                if (currentFolderVal != hubMappingFolder)
+                {
+                    getElm('appHubMappingFolder').value = hubMappingFolder
+                    clearInterval(folderSetIntervalID);
+                }
+            }
+            if (folderTimerCount >= 5)
+            {
+                clearInterval(folderSetIntervalID);
+            }
+        },200)
+
+        getElm('appHubMappingIsPublic').checked = false
+        if (hubMappingIsPublic == "true") {
+            getElm('appHubMappingIsPublic').checked = true
+        }
+
+        getElm('appHubMappingCanDownload').checked = false
+        if (hubMappingCanDownload == "true") {
+            getElm('appHubMappingCanDownload').checked = true
+        }
+
+        getElm('appHubMappingEnabled').checked = false
+        if (hubMappingEnabled == "true") {
+            getElm('appHubMappingEnabled').checked = true
+        }
+
+        getElm('appHubMappingTitle').value = hubMappingTitle;
+        getElm('appHubMappingDescription').value = hubMappingDescription;
+    }
+
+    function appHubMappingSave(progressElmId, responseElmId, hubMappingDomainVal, hubRepositoryInfoVal, hubMappingFolderVal, hubMappingIsPublicVal,hubMappingCanDownloadVal, hubMappingEnabledVal, hubMappingTitleVal, hubMappingDescriptionVal, hubMappingCategoryVal, actionBtnElmId, successCallback, failureCallback) {
+        let id = window.ajaxid++
+        let responseElm = getElm(responseElmId)
+        let responseContainerElmId = responseElmId + "Container"
+        responseElm.textContent = ''
+        hideElm(responseContainerElmId)
+
+        let valid = true
+
+        if (valid === true) {
+            if (hubMappingDomainVal.trim().length === 0) {
+                showText(responseElm, 'Enter Hub Mapping Domain', 'red')
+                valid = false
+            }
+        }
+
+        if (valid === true) {
+            if (hubRepositoryInfoVal.trim().length === 0) {
+                showText(responseElm, 'Select Hub Repository Info', 'red')
+                valid = false
+            } else if (hubRepositoryInfoVal == "0") {
+                showText(responseElm, 'Select Hub Repository Info', 'red')
+                valid = false
+            }
+        }
+
+        if (valid === true) {
+            if (hubMappingFolderVal.trim().length === 0) {
+                showText(responseElm, 'Select Hub Mapping Folder', 'red')
+                valid = false
+            }
+            else if (hubMappingFolderVal == "0") {
+                showText(responseElm, 'Select Hub Mapping Folder', 'red')
+                valid = false
+            }
+        }
+
+        if (valid == true) {
+            getElm(actionBtnElmId).setAttribute("disabled", true)
+
+            let refreshMode = ""
+            let refreshDomain = ""
+
+            let apiUrl = '/AppApi/HubApi'
+            let apiMethod = 'HubDomainMappingSave'
+
+            let apiParams = {
+                "hubMappingDomain": hubMappingDomainVal,
+                "hubRepositoryInfo": hubRepositoryInfoVal,
+                "hubMappingFolder": hubMappingFolderVal,
+                "hubMappingIsPublic": hubMappingIsPublicVal,
+                "hubMappingCanDownload": hubMappingCanDownloadVal,
+                "hubMappingEnabled": hubMappingEnabledVal,
+                "hubMappingTitle" : hubMappingTitleVal,
+                "hubMappingDescription" : hubMappingDescriptionVal,
+                "hubMappingCategory" : hubMappingCategoryVal
+            }
+
+            let processReturn = function (result, responseElmId, successCallback, failureCallback) {
+
+                let responseElm = getElm(responseElmId)
+
+                getElm(actionBtnElmId).removeAttribute("disabled")
+
+                if (result.hasOwnProperty('error') === true) {
+
+                    showText(responseElm, result.error, 'red')
+                }
+                else if (result.hasOwnProperty('message') === true) {
+
+                    refreshViewComponentHtml(progressElmId, 'noresponse', "{{$AppSite}}", "{{$AppView}}", "HubMappingList", {}, "ajax", "", false, function () {
+                        let responseElm = getElm(responseElmId)
+                        showText(responseElm, result.message, 'green')
+                    })
+
+                    if (typeof successCallback === "function") {
+                        successCallback()
+                    }
+                }
+                else if (result.hasOwnProperty('warn') === true) {
+
+                    showText(responseElm, result.warn, 'red')
+                }
+            }
+
+            callAssemblerApi(progressElmId, responseElmId, apiUrl, apiMethod, apiParams, refreshMode, refreshDomain, processReturn, successCallback, failureCallback, 0, "{{$AppSite}}", "{{$AppView}}", "AppHub", "")
+        }
+    }
+
+    function appHubMappingDelete(progressElmId, responseElmId, hubMappingDomainVal, hubRepositoryInfoVal, hubMappingFolderVal, actionBtnElmId, successCallback, failureCallback) {
+        let id = window.ajaxid++
+        let responseElm = getElm(responseElmId)
+        let responseContainerElmId = responseElmId + "Container"
+        responseElm.textContent = ''
+        hideElm(responseContainerElmId)
+
+        let valid = true
+
+        if (valid === true) {
+            if (hubMappingDomainVal.trim().length === 0) {
+                showText(responseElm, 'Hub Mapping Domain cannot be empty', 'red')
+                valid = false
+            }
+        }
+
+        if (valid === true) {
+            if (hubRepositoryInfoVal.trim().length === 0) {
+                showText(responseElm, 'Select Hub Repository Info', 'red')
+                valid = false
+            } else if (hubRepositoryInfoVal == "0") {
+                showText(responseElm, 'Select Hub Repository Info', 'red')
+                valid = false
+            }
+        }
+
+        if (valid === true) {
+            if (hubMappingFolderVal.trim().length === 0) {
+                showText(responseElm, 'Select Hub Mapping Folder', 'red')
+                valid = false
+            }
+            else if (hubMappingFolderVal == "0") {
+                showText(responseElm, 'Select Hub Mapping Folder', 'red')
+                valid = false
+            }
+        }
+
+        if (valid == true) {
+            getElm(actionBtnElmId).setAttribute("disabled", true)
+
+            let refreshMode = ""
+            let refreshDomain = ""
+
+            let apiUrl = '/AppApi/HubApi'
+            let apiMethod = 'HubDomainMappingDelete'
+
+            let apiParams = {
+                "hubMappingDomain": hubMappingDomainVal
+            }
+
+            let processReturn = function (result, responseElmId, successCallback, failureCallback) {
+
+                let responseElm = getElm(responseElmId)
+
+                getElm(actionBtnElmId).removeAttribute("disabled")
+
+                if (result.hasOwnProperty('error') === true) {
+
+                    showText(responseElm, result.error, 'red')
+                }
+                else if (result.hasOwnProperty('message') === true) {
+
+                    refreshViewComponentHtml(progressElmId, 'noresponse', "{{$AppSite}}", "{{$AppView}}", "HubMappingList", {}, "ajax", "", false, function () {
+                        let responseElm = getElm(responseElmId)
+                        showText(responseElm, result.message, 'green')
+                    })
+
+                    if (typeof successCallback === "function") {
+                        successCallback()
+                    }
+                }
+                else if (result.hasOwnProperty('warn') === true) {
+
+                    showText(responseElm, result.warn, 'red')
+                }
+            }
+
+            callAssemblerApi(progressElmId, responseElmId, apiUrl, apiMethod, apiParams, refreshMode, refreshDomain, processReturn, successCallback, failureCallback, 0, "{{$AppSite}}", "{{$AppView}}", "AppHub", "")
+        }
+    }
+
+</script>
+
+

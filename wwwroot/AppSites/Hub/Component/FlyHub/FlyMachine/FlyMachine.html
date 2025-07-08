@@ -1,0 +1,662 @@
+
+
+<div style="margin:5px;">
+
+    <span style="font-size:xx-small; color:red;display:block;">Ensure you have pushed Hub Image to App of same name before creating machines for the App</span>
+
+    <fieldset class="ar-border" style="position:relative;margin: 5px; padding-top:15px;">
+        <legend>OCI Hub Info</legend>
+
+        <button class="ar-sbutton ar-border" style="position:absolute;right:0px;top:-10px;height:20px;font-size:xx-small;"
+                onclick="clearFlyMachineUpdateAccessInfo()">
+            &#10060;
+        </button>
+
+        {{HubAccessSelect('HubAccessSelectRefreshID':'flyMachineUpdateAccessSelectRefresh', 'HubAccessSelectID':'flyMachineUpdateAccessSelect', 'HubAccessSelectAction':'flyMachineUpdateAccessAction')}}
+
+        <div class="ar-flex-content-spaced">
+            <label for="appHubFlyMachineUpdateAPIToken" class="ar-flex-item-stretch" onclick="clearFlyMachineUpdateAccessInfo();">API Token</label>
+        </div>
+        <div class="ar-flex-input-wrap">
+            <input id="appHubFlyMachineUpdateAPIToken" class="ar-input ar-border ar-flex-item-stretch" style="padding-left: 5px;" type="password" placeholder="Your Fly API Token if not stored in Hub Access" value="" />
+        </div>
+        <script type="text/javascript">
+            function clearFlyMachineUpdateAccessInfo() {
+                getElm('appHubFlyMachineUpdateAPIToken').value = ""
+            }
+            function GetFlyMachineUpdateHubAccessName()
+            {
+                var elt = getElm('flyMachineUpdateAccessSelect');
+                if (elt.selectedIndex == -1)
+                    return null;
+                return elt.options[elt.selectedIndex].text;
+            }
+            function flyMachineUpdateAccessAction()
+            {
+                 getElm('appHubFlyMachineUpdateAPIToken').value = ""
+            }
+        </script>
+    </fieldset>
+
+    <fieldset class="ar-border" style="position:relative;margin: 5px; padding-top:15px;">
+        <legend>App Owner Info</legend>
+
+        <span style="font-size:xx-small; color:red;display:block;">If app created with owner details, then machines can created only using same owner details</span>
+
+        <button class="ar-sbutton ar-border" style="position:absolute;right:0px;top:-10px;height:20px;font-size:xx-small;"
+                onclick="getElm('machineOwnerID').value =''; getElm('machineOwnerPassword').value ='';">
+            &#10060;
+        </button>
+
+        <div class="ar-flex-content-spaced">
+            <label for="machineOwnerID" class="ar-flex-item-stretch" onclick="let idElm = getElm('machineOwnerID'); if (idElm.value =='') {idElm.value ='{{$OwnerEmail}}'} else {idElm.value =''}">Email</label>
+            <label for="machineOwnerPassword" class="ar-flex-item-stretch" onclick="let passElm = getElm('machineOwnerPassword');if (passElm.value =='') {passElm.value = '{{$OwnerPassword}}'} else {passElm.value =''}">Password</label>
+        </div>
+        <div class="ar-flex-input-wrap" style="margin: 5px 0px;position:relative;">
+            <input id="machineOwnerID" class="ar-input ar-border ar-flex-item-stretch " style="padding-left: 5px;" autocomplete="off" type="email" placeholder="App Owner Email" value="" />
+            <div class="ar-flex-item-stretch" style="max-width:5px;"></div>
+            <input id="machineOwnerPassword" class="ar-input ar-border ar-flex-item-stretch " style="padding-left: 5px;" autocomplete="off" type="password" placeholder="App Owner Password" value="" />
+        </div>
+    </fieldset>
+
+    <div style="margin:0px 5px;position:relative;">
+        <label for="machineUpdateImagePathSelect" class="ar-flex-item-stretch">Repository Name:Tag</label>
+        {{HubRepositorySelect('RepositorySelectRefreshID':'machineUpdateImagePathRefresh', 'RepositorySelectID':'machineUpdateImagePathSelect', 'RepositorySelectAction':'machineUpdateAction', 'RepositorySelectConfig':'machineUpdateConfig')}}
+    </div>
+
+    <div class="ar-notification" id="updateRegionsResponseContainer" style="display: none; text-align: center; margin: 5px 10px;">
+        <button class="ar-delete" onclick="hideElm('updateRegionsResponseContainer')"></button>
+        <div id="updateRegionsResponse"></div>
+    </div>
+
+    <div id="updateRegionsDiv" class="ar-flex-content-wrap" style="margin:5px;display:none;">
+
+        <span id="updateRegionsProgress"></span>
+
+        <div class="ar-sbutton ar-border" id="updateRegionInfoRefresh" style="height:25px;width:25px; text-align: center;" onclick="retrieveUpdateRegionInfo('updateRegionsProgress', 'updateRegionsResponse', getElm('machineUpdateImagePathSelect').value, 'updateRegionsTemplate', 'updateRegions', 'machineUpdateMachineVolumeSize', 'machineUpdateBtn', function(){ });">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+            </svg>
+        </div>
+        <div class="ar-flex-item-stretch" style="color:blue;font-size:xx-small"></div>
+        <label for="selectAllUpdateRegion" style="text-align: right;">
+            All
+            <input id="selectAllUpdateRegion" type="checkbox" title="All Regions" onclick="updateRegionSelectAll('updateRegion', getElm('selectAllUpdateRegion').checked)">
+        </label>
+        <button class="ar-sbutton" style="height:24px;" onclick="toggleFlex('updateRegionsMore')">
+            More
+        </button>
+
+        <div id="updateRegionsTemplate" style="display:none;">
+            <div style="min-width:50px; margin: 5px 5px;" title="{RegionName}-{RegionCode}-${RegionPrice}/Month{MachineIDs}">
+                <label style="{RegionStyle}">
+                    <input type="checkbox" name="{RegionTagName}" checked="checked" value="{RegionCode}"> {RowNo} {RegionName}
+                </label>
+            </div>
+        </div>
+
+        <div class="ar-border ar-flex-content-wrap" style="width: 100%; margin-top: 5px;">
+            <div id="updateRegions" style="display: flex; flex-flow: row wrap; justify-content: space-between; width: 100%; margin-top: 5px; ">
+                {{@MachineRegionList('RowNo':'<11')}}
+                    <div style="min-width:50px; margin: 5px 5px;" title="{{$Name}}-{{$Code}}-${{$PricePerMonth}}/Month{{@MachineStatus}}-{{$MachineIDs}}{{/MachineStatus}}">
+                        <label style="{{@MachineStatus}}color:green{{/MachineStatus}}{{^MachineStatus}}color:gray{{/MachineStatus}};padding: 7px 0px 0 0px;">
+                            <input type="checkbox" name="updateRegion" {{@MachineStatus}}checked="checked" {{ /MachineStatus}} {{^IsActive}}disabled="disabled" {{ /IsActive}} value="{{$Code}}"> {{$RowNo}} {{$Name}}
+                        </label>
+                    </div>
+                {{/MachineRegionList}}
+            </div>
+            <div id="updateRegionsMore" style="display: none; flex-flow: row wrap; justify-content: space-between; width: 100%; margin-top: 5px; ">
+                {{@1__MachineRegionList('RowNo':'>10')}}
+                <div style="min-width:50px; margin: 5px 5px;" title="{{$Name}}-{{$Code}}-${{$PricePerMonth}}/Month{{@MachineStatus}}-{{$MachineIDs}}{{/MachineStatus}}">
+                    <label style="{{@MachineStatus}}color:green {{/MachineStatus}}{{^MachineStatus}}color:gray{{/MachineStatus}};padding: 7px 0px 0 0px;">
+                        <input type="checkbox" name="updateRegion" title="" {{@MachineStatus}} checked="checked" {{ /MachineStatus}}{{^IsActive}}disabled ="disabled" {{ /IsActive}} value="{{$Code}}"> {{$RowNo}} {{$Name}}
+                    </label>
+                </div>
+                {{/1__MachineRegionList}}
+            </div>
+        </div>
+
+    </div>
+
+    <span class="ar-flex-item-stretch" style="color:blue;font-size:xx-small">select repository to show regions, multiple regions selection restricted to maximum allowed in config</span>
+
+    <div id="showMachineAdvancedOptionsDiv">
+        <label for="showMachineAdvancedOptions" style="font-size:xx-small;">
+            <input id="showMachineAdvancedOptions" type="checkbox" title="Show Advance Options" onclick="toggleElm('machineInfoDiv');"> Advance Options
+        </label>
+    </div>
+
+    <fieldset id="machineInfoDiv" class="ar-border" style="margin-top:10px;padding: 5px;display:none;">
+
+        <div class="ar-flex-content-spaced" style="margin: 0px;">
+            <label for="machineUpdateMachineConfig" class="ar-flex-item-stretch">Machine Config</label>
+        </div>
+        <div class="ar-flex-content-spaced" style="margin: 5px; padding: 0px;">
+            <select id="machineUpdateMachineConfig" class="ar-select ar-flex-item-stretch ar-border" style="padding-left:5px;" title="Machine Config List">
+                {{@MachineConfigList}}
+                <option {{@ConfigSelect}} selected="selected" {{ /ConfigSelect}} value="{{$ConfigName}}">{{$ConfigName}}</option>
+                {{/MachineConfigList}}
+            </select>
+        </div>
+
+        <div class="ar-flex-content-spaced" style="margin: 0px;">
+            <label for="machineUpdateMachineVolumeSize" class="ar-flex-item-stretch">Volume Size</label>
+            <label for="machineUpdateMachineVolumePath" class="ar-flex-item-stretch">Volume Path</label>
+        </div>
+        <div class="ar-flex-input-wrap" style="margin: 0px;position:relative;">
+            <select id="machineUpdateMachineVolumeSize" class="ar-select ar-flex-item-stretch ar-border" style="max-width: 48%; padding-left: 5px;" title="Machine Config List">
+                {{@VolumeConfigList}}
+                <option {{@VolumeSelect}} selected="selected" {{ /VolumeSelect}} value="{{$VolumeSize}}">{{$VolumeName}}</option>
+                {{/VolumeConfigList}}
+            </select>
+            <div class="ar-flex-item-stretch" style="max-width:5px;"></div>
+            <select id="machineUpdateMachineVolumePath" class="ar-select ar-flex-item-stretch ar-border" style="max-width: 48%; padding-left: 5px;" title="Machine Config List">
+                <option selected="selected" value="app/wwwroot">wwwroot</option>
+            </select>
+        </div>
+        <span class="ar-flex-item-stretch" style="color:blue;font-size:xx-small">Volume Changes are destructive and will lead to loss of data</span>
+
+    </fieldset>
+
+    <div id="machineUpdateResponseContainer" class="ar-notification" style="text-align:center;display:none;">
+        <svg fill="currentColor" width="16px" height="16px" viewBox="0 0 32 32" xml:space="preserve"
+             style="position:absolute;left:0px;top:0px;"
+             onclick="toggleElm('machineUpdateDetailResponse')">
+        <g>
+        <path d="M17.962,24.725l1.806,0.096v2.531h-7.534v-2.406l1.045-0.094c0.568-0.063,0.916-0.254,0.916-1.014v-8.801
+                 c0-0.699-0.188-0.92-0.791-0.92l-1.106-0.062v-2.626h5.666L17.962,24.725L17.962,24.725z M15.747,4.648
+                 c1.394,0,2.405,1.047,2.405,2.374c0,1.331-1.014,2.313-2.438,2.313c-1.454,0-2.404-0.982-2.404-2.313
+                 C13.31,5.695,14.26,4.648,15.747,4.648z M16,32C7.178,32,0,24.822,0,16S7.178,0,16,0c8.82,0,16,7.178,16,16S24.82,32,16,32z M16,3
+                 C8.832,3,3,8.832,3,16s5.832,13,13,13s13-5.832,13-13S23.168,3,16,3z" />
+             </g>
+         </svg>
+        <button class="ar-delete" onclick="hideElm('machineUpdateResponseContainer');hideElm('machineUpdateDetailResponse');"></button>
+        <div id="machineUpdateResponse"></div>
+        <div id="machineUpdateResponseWarn"></div>
+    </div>
+
+    <div id="machineUpdateDetailResponse" style="font-size:x-small;text-align:center;display:none;">
+    </div>
+
+    <div class="ar-flex-input-wrap" style="margin: 5px 0px;">
+        <button id="machineUpdateBtn" disabled="disabled" class="ar-button ar-border" style="background-color: #209cee; width: 200px; height: 40px;" tabindex="4"
+                onclick="updateMachines('machineUpdateProgress', 'machineUpdateResponse', getElm('machineOwnerID').value, getElm('machineOwnerPassword').value, 'updateRegion', getElm('machineUpdateMachineConfig').value, getElm('machineUpdateImagePathSelect').value, getElm('machineUpdateMachineVolumeSize').value, getElm('machineUpdateMachineVolumePath').value, 'machineUpdateBtn', 'machineUpdateDetailResponse')">
+            Update Machines <span id="machineUpdateProgress"></span>
+        </button>
+    </div>
+
+</div>
+
+<script type="text/javascript">
+
+    function machineUpdateAction()
+    {
+        let selectElm = getElm('machineUpdateImagePathSelect');
+        let sourceNameTag = selectElm.value;
+        if ((sourceNameTag.trim().length > 0) && (sourceNameTag.trim() != "0"))
+        {
+            getElm('machineUpdateBtn').removeAttribute("disabled");
+            triggerEvent('updateRegionInfoRefresh', 'click');
+            showElm('showMachineAdvancedOptionsDiv');
+            showElm('updateRegionsDiv');
+        }
+        else
+        {
+            getElm('machineUpdateBtn').setAttribute("disabled", true);
+            hideElm('showMachineAdvancedOptionsDiv');
+            hideElm('updateRegionsDiv');
+        }
+    }
+
+    function machineUpdateConfig()
+    {
+        let selectElm = getElm('machineUpdateImagePathSelect');
+        let sourceNameTag = selectElm.value;
+        return {"SelectedRepositoryPath": sourceNameTag};
+    }
+
+    function updateRegionSelectAll(regionTargetElmId, checkedState) {
+        var regionCheckboxes = document.getElementsByName(regionTargetElmId);
+        let checkedCount = 0
+        if (checkedState == true) {
+            for (var i = 0; i < regionCheckboxes.length; i++) {
+                if (regionCheckboxes[i].checked == true) {
+                    checkedCount++
+                }
+            }
+            for (var i = 0; i < regionCheckboxes.length; i++) {
+                if ((regionCheckboxes[i].disabled == false)
+                    && (regionCheckboxes[i].checked == false))
+                {
+                    regionCheckboxes[i].checked = checkedState
+                    checkedCount++
+                    if (checkedCount >= parseInt('{{$MaxUpdateRegions}}')) break
+                }
+            }
+        } else {
+            for (var i = 0; i < regionCheckboxes.length; i++) {
+                if (regionCheckboxes[i].disabled == false) {
+                    regionCheckboxes[i].checked = checkedState
+                    checkedCount++
+                }
+            }
+        }
+    }
+
+    function retrieveUpdateRegionInfo(progressElmId, responseElmId, repositoryPath, updateRegionTemplateElmId, updateRegionTargetElmId, volumeConfigListSelectElmId, doUpdateBtnElmId, successCallback, failureCallback) {
+        let id = window.ajaxid++;
+        let responseElm = getElm(responseElmId);
+        let responseContainerElmId = responseElmId + "Container";
+        responseElm.textContent = '';
+        hideElm(responseContainerElmId);
+
+        let valid = true;
+
+        let hubAccessName = GetFlyMachineUpdateHubAccessName();
+        if (hubAccessName.length == 0) {
+           showText(responseElm, 'Select Hub Access', 'red');
+           valid = false;
+        }
+
+        let apiToken = "";
+        if (haveElm('appHubMachineUpdateAPIToken') == true) {
+            apiToken = getElm('appHubMachineUpdateAPIToken').value;
+        }
+
+        const result = repositoryPath.split(":");
+        let appName = result[0];
+
+        if (appName.length == 0) {
+           showText(responseElm, 'Select the Repository Path', 'red');
+           valid = false;
+        }
+
+        if (valid === true) {
+
+            disableElms();
+            getElm(doUpdateBtnElmId).setAttribute("disabled", true);
+
+            let refreshMode = ""
+            let refreshDomain = "";
+
+            let apiUrl = '/AppApi/HubApi';
+            let apiMethod = 'RetrieveRegionInfo';
+
+            let apiParams = {
+                "hubAccessName": hubAccessName,
+                "apiToken": apiToken,
+                "appName": appName
+            };
+
+            let processReturn = function (result, responseElmId, successCallback) {
+
+                enableElms();
+                let responseElm = getElm(responseElmId);
+
+                if (result.hasOwnProperty('error') === true) {
+                    showText(responseElm, result.error, 'red');
+
+                    getElm(doUpdateBtnElmId).removeAttribute("disabled");
+                }
+                //else if (result.hasOwnProperty('message') === true) {
+                //    showText(responseElm, result.message, 'green');
+
+                //    if (typeof successCallback === "function") {
+                //        successCallback();
+                //    }
+                //}
+                else {
+
+                    if (result.hasOwnProperty("AppRegionList") === true) {
+                        let updateRegionList = result.AppRegionList
+
+                        let updateRegionTemplateElm = getElm(updateRegionTemplateElmId)
+                        let updateRegionTemplateHtml = updateRegionTemplateElm.innerHTML
+
+                        let updateRegionTemplate = ""
+                        let updateRegionMoreTemplate = ""
+
+                        for (var i = 0; i < updateRegionList.length; i++) {
+                            let regionJson = updateRegionList[i]
+
+                            let regionMachineIDs = false
+                            if (regionJson.hasOwnProperty('MachineIDs') === true) {
+                                regionMachineIDs = regionJson.MachineIDs
+                            }
+                            let regionCode = ""
+                            if (regionJson.hasOwnProperty('Code') === true) {
+                                regionCode = regionJson.Code
+                            }
+                            let regionMachineStatus = false
+                            if (regionJson.hasOwnProperty('MachineStatus') === true) {
+                                regionMachineStatus = regionJson.MachineStatus
+                            }
+                            let regionName = regionCode
+                            if (regionJson.hasOwnProperty('Name') === true) {
+                                regionName = regionJson.Name
+                            }
+                            let regionPrice = ""
+                            if (regionJson.hasOwnProperty('PricePerMonth') === true) {
+                                regionPrice = regionJson.PricePerMonth
+                            }
+
+                            let regionLatitude = ""
+                            if (regionJson.hasOwnProperty('Latitude') === true) {
+                                regionLatitude = regionJson.Latitude
+                            }
+                            let regionLongitude = ""
+                            if (regionJson.hasOwnProperty('Longitude') === true) {
+                                regionLongitude = regionJson.Longitude
+                            }
+                            let rowNo = i + 1
+
+                            let updateRegionTemplateItem = updateRegionTemplateHtml
+
+                            if (regionMachineStatus == false) {
+                                updateRegionTemplateItem = updateRegionTemplateItem.replace(/checked="checked"/g, "")
+                                updateRegionTemplateItem = updateRegionTemplateItem.replace(/{RegionStyle}/g, "color:gray;padding: 7px 0px 0 0px;")
+                                updateRegionTemplateItem = updateRegionTemplateItem.replace(/{MachineIDs}/g, "")
+                            } else {
+                                updateRegionTemplateItem = updateRegionTemplateItem.replace(/{RegionStyle}/g, "color:green;padding: 7px 0px 0 0px;")
+                                updateRegionTemplateItem = updateRegionTemplateItem.replace(/{MachineIDs}/g, "-" + regionMachineIDs);
+                            }
+
+                            updateRegionTemplateItem = updateRegionTemplateItem.replace(/{RegionTagName}/g, 'updateRegion')
+                            updateRegionTemplateItem = updateRegionTemplateItem.replace(/{RegionCode}/g, regionCode)
+                            updateRegionTemplateItem = updateRegionTemplateItem.replace(/{RegionName}/g, regionName)
+                            updateRegionTemplateItem = updateRegionTemplateItem.replace(/{RegionPrice}/g, regionPrice)
+                            updateRegionTemplateItem = updateRegionTemplateItem.replace(/{RowNo}/g, rowNo)
+
+                            if (i < 10) {
+                                updateRegionTemplate = updateRegionTemplate + updateRegionTemplateItem
+                            } else {
+                                updateRegionMoreTemplate = updateRegionMoreTemplate + updateRegionTemplateItem
+                            }
+                        }
+
+                        let updateRegionTargetElm = getElm(updateRegionTargetElmId)
+                        updateRegionTargetElm.innerHTML = updateRegionTemplate
+
+                        let updateRegionMoreTargetElm = getElm(updateRegionTargetElmId + "More")
+                        updateRegionMoreTargetElm.innerHTML = updateRegionMoreTemplate
+                    }
+                    
+                    if (result.hasOwnProperty("VolumeConfigList") === true) {
+                        let volumeConfigList = result.VolumeConfigList
+
+                        let selectElm = getElm(volumeConfigListSelectElmId)
+                        if (selectElm) {
+                            selectElm.options.length = 0
+
+                            for (var i = 0; i < volumeConfigList.length; i++) {
+                                let volumeConfig = volumeConfigList[i]
+
+                                let volumeName = ""
+                                if (volumeConfig.hasOwnProperty('VolumeName') === true) {
+                                    volumeName = volumeConfig.VolumeName
+                                }
+
+                                let volumeSize = ""
+                                if (volumeConfig.hasOwnProperty('VolumeSize') === true) {
+                                    volumeSize = volumeConfig.VolumeSize
+                                }
+
+                                let volumeSelect = false
+                                if (volumeConfig.hasOwnProperty('VolumeSelect') === true) {
+                                    volumeSelect = volumeConfig.VolumeSelect
+                                }
+                                if (volumeSelect == true) {
+                                    selectElm.options[selectElm.options.length] = new Option(volumeName, volumeSize, true, true)
+                                } else {
+                                    selectElm.options[selectElm.options.length] = new Option(volumeName, volumeSize, false, false)
+                                }
+                            }
+                        }
+                    }
+
+                    getElm(doUpdateBtnElmId).removeAttribute("disabled");
+
+                    if (typeof successCallback === "function") {
+                        successCallback();
+                    }
+
+                }
+            };
+
+            callAssemblerApi(progressElmId, responseElmId, apiUrl, apiMethod, apiParams, refreshMode, refreshDomain, processReturn, successCallback, failureCallback, 0, "{{$AppSite}}", "{{$AppView}}", "{{$ViewName}}", "");
+        }
+
+        return false;
+    }
+
+    function updateMachines(progressElmId, responseElmId, appOwnerIDVal, appOwnerPasswordVal, updateRegionTargetElmName, machineConfigNameVal, repositoryInfoVal, attachVolumeSizeVal, attachVolumePathVal,  doCloneBtnElmId, detailResponseElmId, successCallback, failureCallback) {
+        let id = window.ajaxid++;
+        let responseElm = getElm(responseElmId);
+        let responseContainerElmId = responseElmId + "Container";
+        responseElm.textContent = '';
+        hideElm(responseContainerElmId);
+
+        let responseWarnElmId = responseElmId + "Warn"
+        let responseWarnElm = getElm(responseWarnElmId)
+        responseWarnElm.textContent = '';
+
+        hideElm(detailResponseElmId)
+        let detailResponseElm = getElm(detailResponseElmId)
+        detailResponseElm.textContent = '';
+
+        let valid = true;
+
+        let hubAccessName = GetFlyMachineUpdateHubAccessName();
+        if (hubAccessName.length == 0) {
+           showText(responseElm, 'Select Hub Access', 'red');
+           valid = false;
+        }
+
+        let apiToken = "";
+        if (haveElm('appHubMachineUpdateAPIToken') == true) {
+            apiToken = getElm('appHubMachineUpdateAPIToken').value;
+        }
+
+        if (valid == true) {
+            if (appOwnerIDVal.length == 0) {
+                showText(responseElm, 'App Owner ID Cannot be Empty', 'red');
+                valid = false;
+            }
+        }
+
+        if (valid == true) {
+            if (appOwnerPasswordVal.length == 0) {
+                showText(responseElm, 'App Owner Password Cannot be Empty', 'red')
+                valid = false
+            }
+        }
+
+        let machineUpdateRegionList = []
+        var updateRegionCheckboxes = document.getElementsByName(updateRegionTargetElmName)
+        for (var i = 0; i < updateRegionCheckboxes.length; i++) {
+            if (updateRegionCheckboxes[i].checked) {
+                machineUpdateRegionList.push(updateRegionCheckboxes[i].value)
+            }
+        }
+
+        // if (valid == true) {
+        //     if (machineUpdateRegionList.length == 0) {
+        //         showText(responseElm, 'Select at least one Update Region', 'red');
+        //         valid = false;
+        //     }
+        // }
+               
+        if (valid == true) {
+            if (machineConfigNameVal.length == 0) {
+                showText(responseElm, 'Update Machine Config Cannot be Empty', 'red');
+                valid = false;
+            }
+        }
+                                      
+        if (valid == true) {
+            if (repositoryInfoVal.length == 0) {
+                showText(responseElm, 'Select Update Repository Path', 'red')
+                valid = false
+            }
+        }
+
+        let attachVolumeSize = parseInt(attachVolumeSizeVal, 0)
+        if (valid == true) {
+            if (attachVolumeSize > 0) {
+                if (attachVolumePathVal.length == 0) {
+                    showText(responseElm, 'Set the Attach Volume Path if Attach Volume Size is greater than zero', 'red')
+                    valid = false
+                }
+            }
+        }
+        
+        if (valid === true) {
+
+            getElm(doCloneBtnElmId).setAttribute("disabled", true);
+
+            let refreshMode = ""
+            let refreshDomain = "";
+
+            let apiUrl = '/AppApi/HubApi';
+            let apiMethod = 'UpdateMachines';
+         
+            let apiParams = {
+                "hubAccessName": hubAccessName,
+                "apiToken": apiToken,
+                "appOwnerID": appOwnerIDVal,
+                "appOwnerPassword": appOwnerPasswordVal,
+                "repository_info": repositoryInfoVal,
+                "machineRegions": machineUpdateRegionList,
+                "machineConfigName": machineConfigNameVal,
+                "attachVolumeSize" : attachVolumeSize, 
+                "attachVolumePath": attachVolumePathVal
+            };
+
+            let processReturn = function (result, responseElmId, successCallback, failureCallback) {
+                
+                let responseElm = getElm(responseElmId);
+
+                if (result.hasOwnProperty('error') === true) {
+                    showText(responseElm, result.error, 'red');
+                    getElm(doCloneBtnElmId).removeAttribute("disabled");
+
+                    let detailMessageHtml = "";
+                    let messageNo = 0;
+                    if (result.hasOwnProperty('errorJson') === true) {
+                        let errorJson = result.errorJson;
+                        for (let i = 0; i < errorJson.length; i++) {
+                            messageNo++;
+                            let messageObj = errorJson[i];
+                            for (var key in messageObj) {
+                                if (messageObj.hasOwnProperty(key)) {
+                                    detailMessageHtml = detailMessageHtml + messageNo + " : <span style='color:red'>" + messageObj[key] + "</span><br/>";
+                                }
+                            }
+                        }
+                    }
+                    getElm(detailResponseElmId).innerHTML = detailMessageHtml;
+                    showElm(detailResponseElmId);
+                }
+                else if (result.hasOwnProperty('message') === true) {
+                    showText(responseElm, result.message, 'green');
+                    getElm(doCloneBtnElmId).removeAttribute("disabled");
+
+                    if (result.hasOwnProperty('warn') === true) {
+                        showText(responseWarnElm, result.warn, 'blue')                       
+                    }
+
+                    let detailMessageHtml = "";
+                    let messageNo = 0;
+                    if (result.hasOwnProperty('messageJson') === true) {
+                        let messageJson = result.messageJson;
+                        for (let i = 0; i < messageJson.length; i++) {
+                            messageNo++;
+                            let messageObj = messageJson[i];
+                            for (var key in messageObj) {
+                                if (messageObj.hasOwnProperty(key)) {
+                                    detailMessageHtml = detailMessageHtml + messageNo + " : <span style='color:green'>" + messageObj[key] + "</span><br/>";
+                                }
+                            }
+                        }
+                    }
+                    if (result.hasOwnProperty('warnJson') === true) {
+                        let messageJson = result.warnJson;
+                        for (let n = 0; n < messageJson.length; n++) {
+                            messageNo++;
+                            let messageObj = messageJson[n];
+                            for (var key in messageObj) {
+                                if (messageObj.hasOwnProperty(key)) {
+                                    detailMessageHtml = detailMessageHtml + messageNo + " : <span style='color:blue'>" + messageObj[key] + "</span><br/>";
+                                }
+                            }
+                        }
+                    }
+                    if (result.hasOwnProperty('errorJson') === true) {
+                        let errorJson = result.errorJson
+                        for (let i = 0; i < errorJson.length; i++) {
+                            messageNo++
+                            let messageObj = errorJson[i]
+                            for (var key in messageObj) {
+                                if (messageObj.hasOwnProperty(key)) {
+                                    detailMessageHtml = detailMessageHtml + messageNo + " : <span style='color:red'>" + messageObj[key] + "</span><br/>"
+                                }
+                            }
+                        }
+                    }
+                    getElm(detailResponseElmId).innerHTML = detailMessageHtml;
+                    //showElm(detailResponseElmId);
+                    
+                    if (typeof successCallback === "function") {
+                        successCallback()
+                    }
+                    triggerEvent('updateRegionInfoRefresh', 'click')
+                }
+                else if (result.hasOwnProperty('warn') === true) {
+                    showText(responseElm, result.warn, 'red');
+                    getElm(doCloneBtnElmId).removeAttribute("disabled");
+
+                    if (result.hasOwnProperty('warn') === true) {
+                        showText(responseWarnElm, result.warn, 'blue')
+                    }
+
+                    let detailMessageHtml = "";
+                    let messageNo = 0;
+                    if (result.hasOwnProperty('warnJson') === true) {
+                        let messageJson = result.warnJson;
+                        for (let i = 0; i < messageJson.length; i++) {
+                            messageNo++;
+                            let messageObj = messageJson[i];
+                            for (var key in messageObj) {
+                                if (messageObj.hasOwnProperty(key)) {
+                                    detailMessageHtml = detailMessageHtml + messageNo + " : <span style='color:blue'>" + messageObj[key] + "</span><br/>";
+                                }
+                            }
+                        }
+                    }
+                    if (result.hasOwnProperty('errorJson') === true) {
+                        let errorJson = result.errorJson
+                        for (let i = 0; i < errorJson.length; i++) {
+                            messageNo++
+                            let messageObj = errorJson[i]
+                            for (var key in messageObj) {
+                                if (messageObj.hasOwnProperty(key)) {
+                                    detailMessageHtml = detailMessageHtml + messageNo + " : <span style='color:red'>" + messageObj[key] + "</span><br/>"
+                                }
+                            }
+                        }
+                    }
+                    getElm(detailResponseElmId).innerHTML = detailMessageHtml;
+                    showElm(detailResponseElmId);
+                }
+            };
+
+            callAssemblerApi(progressElmId, responseElmId, apiUrl, apiMethod, apiParams, refreshMode, refreshDomain, processReturn, successCallback, failureCallback, 0, "{{$AppSite}}", "{{$AppView}}", "{{$ViewName}}", "");
+        }
+
+        return false;
+    }
+  
+</script>
+
+
+

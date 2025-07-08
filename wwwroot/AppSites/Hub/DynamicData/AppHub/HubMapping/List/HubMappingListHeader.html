@@ -1,0 +1,68 @@
+<thead>
+    <tr>
+        <td colspan="2">
+            <div class="ar-flex-content-spaced">
+                {{@HavePreviousPage}}               
+                <button class="ar-button ar-border" style="width:40px;height:40px;" title="PageNo={{$PreviousPage}}, ItemsPerPage={{$ItemsPerPage}}"
+                        data-ar-action="refreshViewComponentHtml"
+                        data-ar-progress="previousHubMappingProgress"
+                        data-ar-response="{{$ViewParentID}}Response"
+                        data-ar-appsite="{{$AppSite}}"
+                        data-ar-appview="{{$AppView}}"
+                        data-ar-component="{{$ViewParentID}}"
+                        data-ar-config="{'PageNo': '{{$PreviousPage}}', 'ItemsPerPage': '{{$ItemsPerPage}}'}">
+                    <strong style="font-weight:bolder;">&lt;</strong> <span id="previousHubMappingProgress"></span>
+                </button>
+                {{/HavePreviousPage}}
+                {{^HavePreviousPage}}               
+                <button class="ar-button ar-border" style="width:40px;height:40px;" disabled>
+                    <strong style="font-weight:bolder;">&lt;</strong> <span id="previousHubMappingProgress"></span>
+                </button>
+                {{/HavePreviousPage}}
+
+                <div style="text-align:center;position:relative;" class="ar-flex-item-stretch">
+                </div>
+
+                {{@HaveNextPage}}
+                <button class="ar-button ar-border" style="width: 40px; height: 40px;" title="PageNo={{$NextPage}}, ItemsPerPage={{$ItemsPerPage}}"
+                        data-ar-action="refreshViewComponentHtml"
+                        data-ar-progress="nextHubMappingProgress"
+                        data-ar-response="{{$ViewParentID}}Response"
+                        data-ar-appsite="{{$AppSite}}"
+                        data-ar-appview="{{$AppView}}"
+                        data-ar-component="{{$ViewParentID}}"
+                        data-ar-config="{'PageNo': '{{$NextPage}}', 'ItemsPerPage': '{{$ItemsPerPage}}'}">
+                    <strong style="font-weight:bolder;">&gt;</strong><span id="nextHubMappingProgress"></span>
+                </button>              
+                {{/HaveNextPage}}
+                {{^HaveNextPage}}
+                <button class="ar-button ar-border" style="width:40px;height:40px;" disabled>
+                    <strong style="font-weight:bolder;">&gt;</strong> <span id="nextHubMappingProgress"></span>
+                </button>                
+                {{/HaveNextPage}}
+
+                <button  id="envInfoRefreshBtn" class="ar-button ar-border" style="width:40px;height:40px;" title="PageNo={{$PageNo}}, ItemsPerPage={{$ItemsPerPage}}"
+                        data-ar-action="refreshViewComponentHtml"
+                        data-ar-progress="refreshHubMappingProgress"
+                        data-ar-response="{{$ViewParentID}}Response"
+                        data-ar-appsite="{{$AppSite}}"
+                        data-ar-appview="{{$AppView}}"
+                        data-ar-component="{{$ViewParentID}}"
+                        data-ar-config="{'PageNo': '{{$PageNo}}', 'ItemsPerPage': '{{$ItemsPerPage}}'}">
+                    &#x2714;<span id="refreshHubMappingProgress"></span>
+                </button>
+
+            </div>
+        </td>
+    </tr>
+</thead>
+<thead>
+    <tr style="background-color: lightgray; height: 30px; border-bottom: solid 1px white;">
+        <th style="text-align: center; width: 80px; font-size: xx-small;">
+            Domain Info
+        </th>
+        <th style="text-align: center; font-size: xx-small;" colspan="2">
+            Hub Info
+        </th>
+    </tr>
+</thead>

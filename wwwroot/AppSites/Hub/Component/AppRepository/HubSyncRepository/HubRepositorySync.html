@@ -1,0 +1,1039 @@
+
+
+<div style="margin:5px;">
+
+    <div class="ar-flex-content-wrap">
+
+        <label class="ar-flex-item-stretch" style="margin: 5px 0px; text-align: center">
+            Exclude Public Mapped Apps
+            <input id="appHubCleanExcludePublicMappedApps" type="checkbox" title="Exclude Public Mapped Apps" style="margin-left: 5px;" checked="checked">
+        </label>
+
+    </div>
+
+    <div class="ar-flex-content-wrap" style="margin:5px;">
+        <button id="appHubCleanBtn" class="ar-button ar-border ar-flex-item-stretch" style="text-align: center; font-weight: bolder; color: black;"
+                onclick="appHubClean('appHubCleanProgress', 'appHubCleanResponse', getElm('appHubCleanExcludePublicMappedApps').checked, 'appHubCleanBtn')">
+            Clean Hub <span id="appHubCleanProgress"></span>
+        </button>
+    </div>
+
+    <div class="ar-notification" id="appHubCleanResponseContainer" style="margin:10px; padding:10px;display:none;">
+        <button class="ar-delete" onclick="hideElm('appHubCleanResponseContainer')"></button>
+        <div id="appHubCleanResponse"></div>
+    </div>
+
+    <fieldset class="ar-border" style="position:relative;margin: 5px; padding-top:15px;">
+        <legend>OCI Hub Info</legend>
+
+        <button class="ar-sbutton ar-border" style="position:absolute;right:0px;top:-10px;height:20px;font-size:xx-small;"
+                onclick="clearSyncAccessInfo()">
+            &#10060;
+        </button>
+
+        {{HubAccessSelect('HubAccessSelectRefreshID':'appSyncAccessSelectRefresh', 'HubAccessSelectID':'appSyncAccessSelect', 'HubAccessSelectAction':'appHubSyncAccessAction')}}
+
+        <div class="ar-flex-content-spaced">
+            <label for="appHubRegistryKey" class="ar-flex-item-stretch" onclick="clearSyncAccessInfo();">Key</label>
+            <label for="appHubRegistryToken" class="ar-flex-item-stretch" onclick="clearSyncAccessInfo();">Token</label>
+        </div>
+        <div class="ar-flex-input-wrap">
+            <input id="appHubRegistryKey" class="ar-input ar-border ar-flex-item-stretch" style="padding-left: 5px;" type="text" placeholder="Your Registry Key" value="" />
+            <div class="ar-flex-item-stretch" style="max-width:5px;"></div>
+            <input id="appHubRegistryToken" class="ar-input ar-border ar-flex-item-stretch" style="padding-left: 5px;" type="password" placeholder="Your Registry Token" value="" />
+        </div>
+
+    </fieldset>
+
+    <div class="ar-flex-content-wrap" style="margin:5px;display:none;">
+
+        <button class="ar-button ar-border ar-flex-item-stretch" style="text-align: center; font-weight: bolder; color:black;">
+            Pull Hub
+        </button>
+        <div style="width:5px;">
+        </div>
+        <button class="ar-button ar-border ar-flex-item-stretch" style="text-align: center; font-weight: bolder; color: black;">
+            Push Hub
+        </button>
+
+    </div>
+
+    <fieldset class="ar-border" style="margin: 5px;">
+        <legend>OCI Image Info</legend>
+
+        <div class="ar-flex-content-spaced">
+            <label for="appHubLocalImagePath" class="ar-flex-item-stretch" onclick="setTestImages('appHubLocalImagePath', 'appHubRemoteImagePath', 'appSyncAccessSelect')">Local Name:Tag</label>
+            <label for="appHubRemoteImagePath" class="ar-flex-item-stretch" onclick="setTestImages('appHubLocalImagePath', 'appHubRemoteImagePath', 'appSyncAccessSelect')">Remote Name:Tag</label>
+        </div>
+
+        <div class="ar-flex-input-wrap">
+            <input id="appHubLocalImagePath" class="ar-input ar-border ar-flex-item-stretch" style="padding-left: 5px;" type="text" placeholder="Your Local Image Name : Tag" value="" />
+            <div class="ar-flex-item-stretch" style="max-width:5px;"></div>
+            <input id="appHubRemoteImagePath" class="ar-input ar-border ar-flex-item-stretch" style="padding-left: 5px;" type="text" placeholder="Your Remote Image Name : Tag" value="" />
+        </div>
+
+        {{HubRepositorySelect('RepositorySelectRefreshID':'appHubRepositorySyncImagePathRefresh', 'RepositorySelectID':'appHubRepositorySyncImagePathSelect', 'RepositorySelectAction':'appHubSyncRepositoryAction', 'RepositorySelectConfig':'appHubSyncRepositoryConfig')}}
+
+    </fieldset>
+
+    <div class="ar-flex-content-wrap" style="margin:5px;">
+
+        <button id="appHubPullBtn" class="ar-button ar-border ar-flex-item-stretch" style="text-align: center; font-weight: bolder; color:black;"
+                onclick="appHubPullRepository('appHubPullProgress', 'appHubRegistryResponse', getElm('appSyncAccessSelect').value, getElm('appHubRegistryKey').value, getElm('appHubRegistryToken').value, getElm('appHubLocalImagePath').value, getElm('appHubRemoteImagePath').value, 'appHubPullBtn', 'appHubRegistryDetailResponse')">
+            Pull Image<span id="appHubPullProgress"></span>
+        </button>
+        <div style="width:5px;">
+        </div>
+        <button id="appHubPushBtn" class="ar-button ar-border ar-flex-item-stretch" style="text-align: center; font-weight: bolder; color: black;"
+                onclick="appHubPushRepository('appHubPushProgress', 'appHubRegistryResponse', getElm('appSyncAccessSelect').value, getElm('appHubRegistryKey').value, getElm('appHubRegistryToken').value, getElm('appHubLocalImagePath').value, getElm('appHubRemoteImagePath').value, 'appHubPushBtn', 'appHubRegistryDetailResponse')">
+            Push Image <span id="appHubPushProgress"></span>
+        </button>
+
+    </div>
+
+    <div class="ar-flex-content-wrap" style="margin:5px;">
+
+        <button id="appHubPullManifestBtn" class="ar-button ar-border ar-flex-item-stretch" style="text-align: center; font-weight: bolder; color:black;"
+                onclick="appHubPullManifest('appHubPullManifestProgress', 'appHubRegistryResponse', getElm('appSyncAccessSelect').value, getElm('appHubRegistryKey').value, getElm('appHubRegistryToken').value, getElm('appHubLocalImagePath').value, getElm('appHubRemoteImagePath').value, 'appHubPullManifestBtn', 'appHubRegistryDetailResponse')">
+            Pull Manifest<span id="appHubPullManifestProgress"></span>
+        </button>
+        <div style="width:5px;">
+        </div>
+        <button id="appHubPushManifestBtn" class="ar-button ar-border ar-flex-item-stretch" style="text-align: center; font-weight: bolder; color: black;"
+                onclick="appHubPushManifest('appHubPushManifestProgress', 'appHubRegistryResponse', getElm('appSyncAccessSelect').value, getElm('appHubRegistryKey').value, getElm('appHubRegistryToken').value, getElm('appHubLocalImagePath').value, getElm('appHubRemoteImagePath').value, 'appHubPushManifestBtn', 'appHubRegistryDetailResponse')">
+            Push Manifest <span id="appHubPushManifestProgress"></span>
+        </button>
+    </div>
+
+    <div id="appHubRegistryResponseContainer" class="ar-notification" style="text-align:center;display:none;">
+        <svg fill="currentColor" width="16px" height="16px" viewBox="0 0 32 32" xml:space="preserve"
+             style="position:absolute;left:0px;top:0px;"
+             onclick="toggleElm('appHubRegistryDetailResponse')">
+        <g>
+        <path d="M17.962,24.725l1.806,0.096v2.531h-7.534v-2.406l1.045-0.094c0.568-0.063,0.916-0.254,0.916-1.014v-8.801
+                 c0-0.699-0.188-0.92-0.791-0.92l-1.106-0.062v-2.626h5.666L17.962,24.725L17.962,24.725z M15.747,4.648
+                 c1.394,0,2.405,1.047,2.405,2.374c0,1.331-1.014,2.313-2.438,2.313c-1.454,0-2.404-0.982-2.404-2.313
+                 C13.31,5.695,14.26,4.648,15.747,4.648z M16,32C7.178,32,0,24.822,0,16S7.178,0,16,0c8.82,0,16,7.178,16,16S24.82,32,16,32z M16,3
+                 C8.832,3,3,8.832,3,16s5.832,13,13,13s13-5.832,13-13S23.168,3,16,3z" />
+             </g>
+         </svg>
+        <button class="ar-delete" onclick="hideElm('appHubRegistryResponseContainer');hideElm('appHubRegistryDetailResponse');"></button>
+        <div id="appHubRegistryResponse"></div>
+        <div id="appHubRegistryResponseWarn"></div>
+    </div>
+
+    <div id="appHubRegistryDetailResponse" style="font-size:x-small;text-align:center;display:none;">
+    </div>
+
+</div>
+
+<script type="text/javascript">
+
+    function setTestImages(sourceImageElmId, targetImageElmId, hubAccessSelectElmId) {
+
+        let hubPrefix = "";
+        const hubAccessSelectElm = getElm(hubAccessSelectElmId)
+        const selectedIndex = hubAccessSelectElm.selectedIndex;
+        const selectedOption = hubAccessSelectElm.options[selectedIndex];
+        const elmAttrVal = selectedOption.getAttribute('data-ar-hubprefix')
+        if (elmAttrVal) {
+            hubPrefix = elmAttrVal;
+        }
+
+        const sourceImageElm = getElm(sourceImageElmId)
+        const targetImageElm = getElm(targetImageElmId)
+        const currentVal = sourceImageElm.value;
+        const testImages = JSON.parse('{{$TestImages}}');
+        //console.log('TestImages Count=' + testImages.length);
+        if (testImages.length > 0) {
+            sourceImageElm.value = "";
+            targetImageElm.value = "";
+            let nextVal = false;
+            for (let i = 0; i < testImages.length; i++) {
+                if (nextVal == true) {
+                    sourceImageElm.value = hubPrefix +  testImages[i];
+                    targetImageElm.value = testImages[i];
+                    break;
+                }
+                if (testImages[i] == currentVal.replace(hubPrefix, ""))
+                {
+                    if (i < (testImages.length -1))
+                    {
+                        nextVal = true;
+                    }
+                    else
+                    {
+                        sourceImageElm.value = hubPrefix + testImages[0];
+                        targetImageElm.value = testImages[0]
+                    }
+                }
+            }
+            if (nextVal ==false)
+            {
+                sourceImageElm.value = hubPrefix + testImages[0];
+                targetImageElm.value = testImages[0]
+            }
+        } else {
+            sourceImageElm.value = "";
+            targetImageElm.value = "";
+        }
+    }
+
+    function clearSyncAccessInfo() {
+        getElm('appHubRegistryKey').value = ""
+        getElm('appHubRegistryToken').value = ""
+
+        triggerEvent('appHubRepositorySyncImagePathRefresh', 'click');         
+    }
+
+    function appHubSyncAccessAction()
+    {
+        let selectElm = getElm('appSyncAccessSelect');
+        getElm('appHubRegistryKey').value = ""
+        getElm('appHubRegistryToken').value = ""
+
+        getElm('appHubLocalImagePath').value = ""
+        getElm('appHubRemoteImagePath').value = ""
+    }
+
+    function appHubSyncRepositoryAction()
+    {
+        let selectElm = getElm('appHubRepositorySyncImagePathSelect');
+        let sourceNameTag = selectElm.value;
+        if ((sourceNameTag.trim().length > 0) && (sourceNameTag.trim() != "0"))
+        {
+            appHubLocalImagePath.value = sourceNameTag;
+            appHubRemoteImagePath.value = sourceNameTag;
+        }
+        else
+        {
+            appHubLocalImagePath.value = "";
+            appHubRemoteImagePath.value = "";
+        }
+    }
+
+    function appHubSyncRepositoryConfig()
+    {
+        let selectElm = getElm('appHubRepositorySyncImagePathSelect');
+        let sourceNameTag = selectElm.value;
+        return {"SelectedRepositoryPath": sourceNameTag};
+    }
+
+    function appHubPullRepository(progressElmId, responseElmId, registryUrlVal, registryKeyVal, registryTokenVal, localOCIImagePathVal, remoteOCIImagePathVal, actionBtnElmId, detailResponseElmId, successCallback, failureCallback) {
+        let id = window.ajaxid++
+        let responseElm = getElm(responseElmId)
+        let responseContainerElmId = responseElmId + "Container"
+        responseElm.textContent = ''
+        hideElm(responseContainerElmId)
+
+        let responseWarnElmId = responseElmId + "Warn"
+        let responseWarnElm = getElm(responseWarnElmId)
+        responseWarnElm.textContent = '';
+
+        hideElm(detailResponseElmId)
+        let detailResponseElm = getElm(detailResponseElmId)
+        detailResponseElm.textContent = '';
+
+        let valid = true
+
+        if (valid === true) {
+            if (registryUrlVal.trim().length === 0) {
+                showText(responseElm, 'Select Hub Access', 'red')
+                valid = false
+            }
+            else if (registryUrlVal.trim() === "0") {
+                showText(responseElm, 'Select Hub Access', 'red')
+                valid = false
+            }
+        }
+
+        //if (valid === true) {
+        //    if (registryKeyVal.trim().length === 0) {
+        //        showText(responseElm, 'Enter Registry User ID', 'red')
+        //        valid = false
+        //    }
+        //}
+
+        if (valid === true) {
+            if (localOCIImagePathVal.trim().length === 0) {
+                showText(responseElm, 'Enter Local OCI Image Path', 'red')
+                valid = false
+            }
+        }
+
+        if (valid === true) {
+            if (remoteOCIImagePathVal.trim().length === 0) {
+                showText(responseElm, 'Enter Remote OCI Image Path', 'red')
+                valid = false
+            }
+        }
+
+        if (valid == true) {
+            getElm(actionBtnElmId).setAttribute("disabled", true)
+
+            let refreshMode = ""
+            let refreshDomain = ""
+
+            let apiUrl = '/AppApi/HubApi'
+            let apiMethod = 'PullRepository'
+
+            let apiParams = {
+                "source_registry_url": registryUrlVal,
+                "source_registry_key": registryKeyVal,
+                "source_registry_token": registryTokenVal,
+                "source_repository_info": remoteOCIImagePathVal,
+                "target_repository_info": localOCIImagePathVal,
+                "forcePull": false,
+            }
+
+            let processReturn = function (result, responseElmId, successCallback, failureCallback) {
+
+                let responseElm = getElm(responseElmId)
+
+                getElm(actionBtnElmId).removeAttribute("disabled")
+
+                if (result.hasOwnProperty('error') === true) {
+
+                    showText(responseElm, result.error, 'red')
+
+                    let detailMessageHtml = "";
+                    let messageNo = 0;
+                    if (result.hasOwnProperty('errorJson') === true) {
+                        let errorJson = result.errorJson;
+                        for (let i = 0; i < errorJson.length; i++) {
+                            messageNo++;
+                            let messageObj = errorJson[i];
+                            for (var key in messageObj) {
+                                if (messageObj.hasOwnProperty(key)) {
+                                    detailMessageHtml = detailMessageHtml + messageNo + " : <span style='color:red'>" + messageObj[key] + "</span><br/>";
+                                }
+                            }
+                        }
+                    }
+                    getElm(detailResponseElmId).innerHTML = detailMessageHtml;
+                    showElm(detailResponseElmId);
+                }
+                else if (result.hasOwnProperty('message') === true) {
+
+                    showText(responseElm, result.message, 'green')
+
+                    if (result.hasOwnProperty('warn') === true) {
+                        showText(responseWarnElm, result.warn, 'blue')                       
+                    }
+
+                    let detailMessageHtml = "";
+                    let messageNo = 0;
+                    if (result.hasOwnProperty('messageJson') === true) {
+                        let messageJson = result.messageJson;
+                        for (let i = 0; i < messageJson.length; i++) {
+                            messageNo++;
+                            let messageObj = messageJson[i];
+                            for (var key in messageObj) {
+                                if (messageObj.hasOwnProperty(key)) {
+                                    detailMessageHtml = detailMessageHtml + messageNo + " : <span style='color:green'>" + messageObj[key] + "</span><br/>";
+                                }
+                            }
+                        }
+                    }
+                    if (result.hasOwnProperty('warnJson') === true) {
+                        let messageJson = result.warnJson;
+                        for (let n = 0; n < messageJson.length; n++) {
+                            messageNo++;
+                            let messageObj = messageJson[n];
+                            for (var key in messageObj) {
+                                if (messageObj.hasOwnProperty(key)) {
+                                    detailMessageHtml = detailMessageHtml + messageNo + " : <span style='color:blue'>" + messageObj[key] + "</span><br/>";
+                                }
+                            }
+                        }
+                    }
+                    if (result.hasOwnProperty('errorJson') === true) {
+                        let errorJson = result.errorJson
+                        for (let i = 0; i < errorJson.length; i++) {
+                            messageNo++
+                            let messageObj = errorJson[i]
+                            for (var key in messageObj) {
+                                if (messageObj.hasOwnProperty(key)) {
+                                    detailMessageHtml = detailMessageHtml + messageNo + " : <span style='color:red'>" + messageObj[key] + "</span><br/>"
+                                }
+                            }
+                        }
+                    }
+                    getElm(detailResponseElmId).innerHTML = detailMessageHtml;
+                    //showElm(detailResponseElmId);
+
+                    if (typeof successCallback === "function") {
+                        successCallback()
+                    }
+                }
+                else if (result.hasOwnProperty('warn') === true) {
+
+                    showText(responseElm, result.warn, 'red')
+
+                    if (result.hasOwnProperty('warn') === true) {
+                        showText(responseWarnElm, result.warn, 'blue')
+                    }
+
+                    let detailMessageHtml = "";
+                    let messageNo = 0;
+                    if (result.hasOwnProperty('warnJson') === true) {
+                        let messageJson = result.warnJson;
+                        for (let i = 0; i < messageJson.length; i++) {
+                            messageNo++;
+                            let messageObj = messageJson[i];
+                            for (var key in messageObj) {
+                                if (messageObj.hasOwnProperty(key)) {
+                                    detailMessageHtml = detailMessageHtml + messageNo + " : <span style='color:blue'>" + messageObj[key] + "</span><br/>";
+                                }
+                            }
+                        }
+                    }
+                    if (result.hasOwnProperty('errorJson') === true) {
+                        let errorJson = result.errorJson
+                        for (let i = 0; i < errorJson.length; i++) {
+                            messageNo++
+                            let messageObj = errorJson[i]
+                            for (var key in messageObj) {
+                                if (messageObj.hasOwnProperty(key)) {
+                                    detailMessageHtml = detailMessageHtml + messageNo + " : <span style='color:red'>" + messageObj[key] + "</span><br/>"
+                                }
+                            }
+                        }
+                    }
+                    getElm(detailResponseElmId).innerHTML = detailMessageHtml;
+                    showElm(detailResponseElmId);
+                }
+
+                triggerEvent('appHubRepositorySyncImagePathRefresh', 'click');
+            }
+
+            callAssemblerApi(progressElmId, responseElmId, apiUrl, apiMethod, apiParams, refreshMode, refreshDomain, processReturn, successCallback, failureCallback, 0, "{{$AppSite}}", "{{$AppView}}", "AppHub", "")
+        }
+    }
+
+    function appHubPushRepository(progressElmId, responseElmId, registryUrlVal, registryKeyVal, registryTokenVal, localOCIImagePathVal, remoteOCIImagePathVal, actionBtnElmId, detailResponseElmId, successCallback, failureCallback) {
+        let id = window.ajaxid++
+        let responseElm = getElm(responseElmId)
+        let responseContainerElmId = responseElmId + "Container"
+        responseElm.textContent = ''
+        hideElm(responseContainerElmId)
+
+        let responseWarnElmId = responseElmId + "Warn"
+        let responseWarnElm = getElm(responseWarnElmId)
+        responseWarnElm.textContent = '';
+
+        hideElm(detailResponseElmId)
+        let detailResponseElm = getElm(detailResponseElmId)
+        detailResponseElm.textContent = '';
+
+        let valid = true
+
+        if (valid === true) {
+            if (registryUrlVal.trim().length === 0) {
+                showText(responseElm, 'Select Hub Access', 'red')
+                valid = false
+            }
+            else if (registryUrlVal.trim() === "0") {
+                showText(responseElm, 'Select Hub Access', 'red')
+                valid = false
+            }
+        }
+
+        //if (valid === true) {
+        //    if (registryKeyVal.trim().length === 0) {
+        //        showText(responseElm, 'Enter Registry User ID', 'red')
+        //        valid = false
+        //    }
+        //}
+
+        if (valid === true) {
+            if (localOCIImagePathVal.trim().length === 0) {
+                showText(responseElm, 'Enter Local OCI Image Path', 'red')
+                valid = false
+            }
+        }
+
+        if (valid === true) {
+            if (remoteOCIImagePathVal.trim().length === 0) {
+                showText(responseElm, 'Enter Remote OCI Image Path', 'red')
+                valid = false
+            }
+        }
+
+        if (valid == true) {
+            getElm(actionBtnElmId).setAttribute("disabled", true)
+
+            let refreshMode = ""
+            let refreshDomain = ""
+
+            let apiUrl = '/AppApi/HubApi'
+            let apiMethod = 'PushRepository'
+
+            let apiParams = {
+                "target_registry_url": registryUrlVal,
+                "target_registry_key": registryKeyVal,
+                "target_registry_token": registryTokenVal,
+                "source_repository_info": localOCIImagePathVal,
+                "target_repository_info": remoteOCIImagePathVal
+            }
+
+            let processReturn = function (result, responseElmId, successCallback, failureCallback) {
+
+                let responseElm = getElm(responseElmId)
+
+                getElm(actionBtnElmId).removeAttribute("disabled")
+
+                if (result.hasOwnProperty('error') === true) {
+
+                    showText(responseElm, result.error, 'red')
+
+                    let detailMessageHtml = "";
+                    let messageNo = 0;
+                    if (result.hasOwnProperty('errorJson') === true) {
+                        let errorJson = result.errorJson;
+                        for (let i = 0; i < errorJson.length; i++) {
+                            messageNo++;
+                            let messageObj = errorJson[i];
+                            for (var key in messageObj) {
+                                if (messageObj.hasOwnProperty(key)) {
+                                    detailMessageHtml = detailMessageHtml + messageNo + " : <span style='color:red'>" + messageObj[key] + "</span><br/>";
+                                }
+                            }
+                        }
+                    }
+                    getElm(detailResponseElmId).innerHTML = detailMessageHtml;
+                    showElm(detailResponseElmId);
+                }
+                else if (result.hasOwnProperty('message') === true) {
+
+                    showText(responseElm, result.message, 'green')
+
+                     if (result.hasOwnProperty('warn') === true) {
+                        showText(responseWarnElm, result.warn, 'blue')                       
+                    }
+
+                    let detailMessageHtml = "";
+                    let messageNo = 0;
+                    if (result.hasOwnProperty('messageJson') === true) {
+                        let messageJson = result.messageJson;
+                        for (let i = 0; i < messageJson.length; i++) {
+                            messageNo++;
+                            let messageObj = messageJson[i];
+                            for (var key in messageObj) {
+                                if (messageObj.hasOwnProperty(key)) {
+                                    detailMessageHtml = detailMessageHtml + messageNo + " : <span style='color:green'>" + messageObj[key] + "</span><br/>";
+                                }
+                            }
+                        }
+                    }
+                    if (result.hasOwnProperty('warnJson') === true) {
+                        let messageJson = result.warnJson;
+                        for (let n = 0; n < messageJson.length; n++) {
+                            messageNo++;
+                            let messageObj = messageJson[n];
+                            for (var key in messageObj) {
+                                if (messageObj.hasOwnProperty(key)) {
+                                    detailMessageHtml = detailMessageHtml + messageNo + " : <span style='color:blue'>" + messageObj[key] + "</span><br/>";
+                                }
+                            }
+                        }
+                    }
+                    if (result.hasOwnProperty('errorJson') === true) {
+                        let errorJson = result.errorJson
+                        for (let i = 0; i < errorJson.length; i++) {
+                            messageNo++
+                            let messageObj = errorJson[i]
+                            for (var key in messageObj) {
+                                if (messageObj.hasOwnProperty(key)) {
+                                    detailMessageHtml = detailMessageHtml + messageNo + " : <span style='color:red'>" + messageObj[key] + "</span><br/>"
+                                }
+                            }
+                        }
+                    }
+                    getElm(detailResponseElmId).innerHTML = detailMessageHtml;
+                    //showElm(detailResponseElmId);
+
+                    if (typeof successCallback === "function") {
+                        successCallback()
+                    }
+                }
+                else if (result.hasOwnProperty('warn') === true) {
+
+                    showText(responseElm, result.warn, 'red')
+
+                    if (result.hasOwnProperty('warn') === true) {
+                        showText(responseWarnElm, result.warn, 'blue')
+                    }
+
+                    let detailMessageHtml = "";
+                    let messageNo = 0;
+                    if (result.hasOwnProperty('warnJson') === true) {
+                        let messageJson = result.warnJson;
+                        for (let i = 0; i < messageJson.length; i++) {
+                            messageNo++;
+                            let messageObj = messageJson[i];
+                            for (var key in messageObj) {
+                                if (messageObj.hasOwnProperty(key)) {
+                                    detailMessageHtml = detailMessageHtml + messageNo + " : <span style='color:blue'>" + messageObj[key] + "</span><br/>";
+                                }
+                            }
+                        }
+                    }
+                    if (result.hasOwnProperty('errorJson') === true) {
+                        let errorJson = result.errorJson
+                        for (let i = 0; i < errorJson.length; i++) {
+                            messageNo++
+                            let messageObj = errorJson[i]
+                            for (var key in messageObj) {
+                                if (messageObj.hasOwnProperty(key)) {
+                                    detailMessageHtml = detailMessageHtml + messageNo + " : <span style='color:red'>" + messageObj[key] + "</span><br/>"
+                                }
+                            }
+                        }
+                    }
+                    getElm(detailResponseElmId).innerHTML = detailMessageHtml;
+                    showElm(detailResponseElmId);
+                }
+
+                triggerEvent('appHubRepositorySyncImagePathRefresh', 'click');
+            }
+
+            callAssemblerApi(progressElmId, responseElmId, apiUrl, apiMethod, apiParams, refreshMode, refreshDomain, processReturn, successCallback, failureCallback, 0, "{{$AppSite}}", "{{$AppView}}", "AppHub", "")
+        }
+    }
+
+    function appHubPullManifest(progressElmId, responseElmId, registryUrlVal, registryKeyVal, registryTokenVal, localOCIImagePathVal, remoteOCIImagePathVal, actionBtnElmId, detailResponseElmId, successCallback, failureCallback) {
+        let id = window.ajaxid++
+        let responseElm = getElm(responseElmId)
+        let responseContainerElmId = responseElmId + "Container"
+        responseElm.textContent = ''
+        hideElm(responseContainerElmId)
+
+        let responseWarnElmId = responseElmId + "Warn"
+        let responseWarnElm = getElm(responseWarnElmId)
+        responseWarnElm.textContent = '';
+
+        hideElm(detailResponseElmId)
+        let detailResponseElm = getElm(detailResponseElmId)
+        detailResponseElm.textContent = '';
+
+        let valid = true
+
+        if (valid === true) {
+            if (registryUrlVal.trim().length === 0) {
+                showText(responseElm, 'Select Hub Access', 'red')
+                valid = false
+            }
+            else if (registryUrlVal.trim() === "0") {
+                showText(responseElm, 'Select Hub Access', 'red')
+                valid = false
+            }
+        }
+
+        //if (valid === true) {
+        //    if (registryKeyVal.trim().length === 0) {
+        //        showText(responseElm, 'Enter Registry User ID', 'red')
+        //        valid = false
+        //    }
+        //}
+
+        if (valid === true) {
+            if (localOCIImagePathVal.trim().length === 0) {
+                showText(responseElm, 'Enter Local OCI Image Path', 'red')
+                valid = false
+            }
+        }
+
+        if (valid === true) {
+            if (remoteOCIImagePathVal.trim().length === 0) {
+                showText(responseElm, 'Enter Remote OCI Image Path', 'red')
+                valid = false
+            }
+        }
+
+        if (valid == true) {
+            getElm(actionBtnElmId).setAttribute("disabled", true)
+
+            let refreshMode = ""
+            let refreshDomain = ""
+
+            let apiUrl = '/AppApi/HubApi'
+            let apiMethod = 'PullManifest'
+
+            let apiParams = {
+                "source_registry_url": registryUrlVal,
+                "source_registry_key": registryKeyVal,
+                "source_registry_token": registryTokenVal,
+                "source_repository_info": remoteOCIImagePathVal,
+                "target_repository_info": localOCIImagePathVal,
+                "forcePull": false,
+            }
+
+            let processReturn = function (result, responseElmId, successCallback, failureCallback) {
+
+                let responseElm = getElm(responseElmId)
+
+                getElm(actionBtnElmId).removeAttribute("disabled")
+
+                if (result.hasOwnProperty('error') === true) {
+
+                    showText(responseElm, result.error, 'red')
+
+                    let detailMessageHtml = "";
+                    let messageNo = 0;
+                    if (result.hasOwnProperty('errorJson') === true) {
+                        let errorJson = result.errorJson;
+                        for (let i = 0; i < errorJson.length; i++) {
+                            messageNo++;
+                            let messageObj = errorJson[i];
+                            for (var key in messageObj) {
+                                if (messageObj.hasOwnProperty(key)) {
+                                    detailMessageHtml = detailMessageHtml + messageNo + " : <span style='color:red'>" + messageObj[key] + "</span><br/>";
+                                }
+                            }
+                        }
+                    }
+                    getElm(detailResponseElmId).innerHTML = detailMessageHtml;
+                    showElm(detailResponseElmId);
+                }
+                else if (result.hasOwnProperty('message') === true) {
+
+                    showText(responseElm, result.message, 'green')
+
+                     if (result.hasOwnProperty('warn') === true) {
+                        showText(responseWarnElm, result.warn, 'blue')                       
+                    }
+
+                    let detailMessageHtml = "";
+                    let messageNo = 0;
+                    if (result.hasOwnProperty('messageJson') === true) {
+                        let messageJson = result.messageJson;
+                        for (let i = 0; i < messageJson.length; i++) {
+                            messageNo++;
+                            let messageObj = messageJson[i];
+                            for (var key in messageObj) {
+                                if (messageObj.hasOwnProperty(key)) {
+                                    detailMessageHtml = detailMessageHtml + messageNo + " : <span style='color:green'>" + messageObj[key] + "</span><br/>";
+                                }
+                            }
+                        }
+                    }
+                    if (result.hasOwnProperty('warnJson') === true) {
+                        let messageJson = result.warnJson;
+                        for (let n = 0; n < messageJson.length; n++) {
+                            messageNo++;
+                            let messageObj = messageJson[n];
+                            for (var key in messageObj) {
+                                if (messageObj.hasOwnProperty(key)) {
+                                    detailMessageHtml = detailMessageHtml + messageNo + " : <span style='color:blue'>" + messageObj[key] + "</span><br/>";
+                                }
+                            }
+                        }
+                    }
+                    if (result.hasOwnProperty('errorJson') === true) {
+                        let errorJson = result.errorJson
+                        for (let i = 0; i < errorJson.length; i++) {
+                            messageNo++
+                            let messageObj = errorJson[i]
+                            for (var key in messageObj) {
+                                if (messageObj.hasOwnProperty(key)) {
+                                    detailMessageHtml = detailMessageHtml + messageNo + " : <span style='color:red'>" + messageObj[key] + "</span><br/>"
+                                }
+                            }
+                        }
+                    }
+                    getElm(detailResponseElmId).innerHTML = detailMessageHtml;
+                    //showElm(detailResponseElmId);
+
+                    if (typeof successCallback === "function") {
+                        successCallback()
+                    }
+                }
+                else if (result.hasOwnProperty('warn') === true) {
+
+                    showText(responseElm, result.warn, 'red')
+
+                    if (result.hasOwnProperty('warn') === true) {
+                        showText(responseWarnElm, result.warn, 'blue')
+                    }
+
+                    let detailMessageHtml = "";
+                    let messageNo = 0;
+                    if (result.hasOwnProperty('warnJson') === true) {
+                        let messageJson = result.warnJson;
+                        for (let i = 0; i < messageJson.length; i++) {
+                            messageNo++;
+                            let messageObj = messageJson[i];
+                            for (var key in messageObj) {
+                                if (messageObj.hasOwnProperty(key)) {
+                                    detailMessageHtml = detailMessageHtml + messageNo + " : <span style='color:blue'>" + messageObj[key] + "</span><br/>";
+                                }
+                            }
+                        }
+                    }
+                    if (result.hasOwnProperty('errorJson') === true) {
+                        let errorJson = result.errorJson
+                        for (let i = 0; i < errorJson.length; i++) {
+                            messageNo++
+                            let messageObj = errorJson[i]
+                            for (var key in messageObj) {
+                                if (messageObj.hasOwnProperty(key)) {
+                                    detailMessageHtml = detailMessageHtml + messageNo + " : <span style='color:red'>" + messageObj[key] + "</span><br/>"
+                                }
+                            }
+                        }
+                    }
+                    getElm(detailResponseElmId).innerHTML = detailMessageHtml;
+                    showElm(detailResponseElmId);
+                }
+
+                triggerEvent('appHubRepositorySyncImagePathRefresh', 'click');
+            }
+
+            callAssemblerApi(progressElmId, responseElmId, apiUrl, apiMethod, apiParams, refreshMode, refreshDomain, processReturn, successCallback, failureCallback, 0, "{{$AppSite}}", "{{$AppView}}", "AppHub", "")
+        }
+    }
+
+    function appHubPushManifest(progressElmId, responseElmId, registryUrlVal, registryKeyVal, registryTokenVal, localOCIImagePathVal, remoteOCIImagePathVal, actionBtnElmId, detailResponseElmId, successCallback, failureCallback) {
+        let id = window.ajaxid++
+        let responseElm = getElm(responseElmId)
+        let responseContainerElmId = responseElmId + "Container"
+        responseElm.textContent = ''
+        hideElm(responseContainerElmId)
+
+        let responseWarnElmId = responseElmId + "Warn"
+        let responseWarnElm = getElm(responseWarnElmId)
+        responseWarnElm.textContent = '';
+
+        hideElm(detailResponseElmId)
+        let detailResponseElm = getElm(detailResponseElmId)
+        detailResponseElm.textContent = '';
+
+        let valid = true
+
+        if (valid === true) {
+            if (registryUrlVal.trim().length === 0) {
+                showText(responseElm, 'Select Hub Access', 'red')
+                valid = false
+            }
+            else if (registryUrlVal.trim() === "0") {
+                showText(responseElm, 'Select Hub Access', 'red')
+                valid = false
+            }
+        }
+
+        //if (valid === true) {
+        //    if (registryKeyVal.trim().length === 0) {
+        //        showText(responseElm, 'Enter Registry User ID', 'red')
+        //        valid = false
+        //    }
+        //}
+
+        if (valid === true) {
+            if (localOCIImagePathVal.trim().length === 0) {
+                showText(responseElm, 'Enter Local OCI Image Path', 'red')
+                valid = false
+            }
+        }
+
+        if (valid === true) {
+            if (remoteOCIImagePathVal.trim().length === 0) {
+                showText(responseElm, 'Enter Remote OCI Image Path', 'red')
+                valid = false
+            }
+        }
+
+        if (valid == true) {
+            getElm(actionBtnElmId).setAttribute("disabled", true)
+
+            let refreshMode = ""
+            let refreshDomain = ""
+
+            let apiUrl = '/AppApi/HubApi'
+            let apiMethod = 'PushManifest'
+
+            let apiParams = {
+                "target_registry_url": registryUrlVal,
+                "target_registry_key": registryKeyVal,
+                "target_registry_token": registryTokenVal,
+                "source_repository_info": localOCIImagePathVal,
+                "target_repository_info": remoteOCIImagePathVal
+            }
+
+            let processReturn = function (result, responseElmId, successCallback, failureCallback) {
+
+                let responseElm = getElm(responseElmId)
+
+                getElm(actionBtnElmId).removeAttribute("disabled")
+
+                if (result.hasOwnProperty('error') === true) {
+
+                    showText(responseElm, result.error, 'red')
+
+                    let detailMessageHtml = "";
+                    let messageNo = 0;
+                    if (result.hasOwnProperty('errorJson') === true) {
+                        let errorJson = result.errorJson;
+                        for (let i = 0; i < errorJson.length; i++) {
+                            messageNo++;
+                            let messageObj = errorJson[i];
+                            for (var key in messageObj) {
+                                if (messageObj.hasOwnProperty(key)) {
+                                    detailMessageHtml = detailMessageHtml + messageNo + " : <span style='color:red'>" + messageObj[key] + "</span><br/>";
+                                }
+                            }
+                        }
+                    }
+                    getElm(detailResponseElmId).innerHTML = detailMessageHtml;
+                    showElm(detailResponseElmId);
+                }
+                else if (result.hasOwnProperty('message') === true) {
+
+                    showText(responseElm, result.message, 'green')
+
+                     if (result.hasOwnProperty('warn') === true) {
+                        showText(responseWarnElm, result.warn, 'blue')                       
+                    }
+
+                    let detailMessageHtml = "";
+                    let messageNo = 0;
+                    if (result.hasOwnProperty('messageJson') === true) {
+                        let messageJson = result.messageJson;
+                        for (let i = 0; i < messageJson.length; i++) {
+                            messageNo++;
+                            let messageObj = messageJson[i];
+                            for (var key in messageObj) {
+                                if (messageObj.hasOwnProperty(key)) {
+                                    detailMessageHtml = detailMessageHtml + messageNo + " : <span style='color:green'>" + messageObj[key] + "</span><br/>";
+                                }
+                            }
+                        }
+                    }
+                    if (result.hasOwnProperty('warnJson') === true) {
+                        let messageJson = result.warnJson;
+                        for (let n = 0; n < messageJson.length; n++) {
+                            messageNo++;
+                            let messageObj = messageJson[n];
+                            for (var key in messageObj) {
+                                if (messageObj.hasOwnProperty(key)) {
+                                    detailMessageHtml = detailMessageHtml + messageNo + " : <span style='color:blue'>" + messageObj[key] + "</span><br/>";
+                                }
+                            }
+                        }
+                    }
+                    if (result.hasOwnProperty('errorJson') === true) {
+                        let errorJson = result.errorJson
+                        for (let i = 0; i < errorJson.length; i++) {
+                            messageNo++
+                            let messageObj = errorJson[i]
+                            for (var key in messageObj) {
+                                if (messageObj.hasOwnProperty(key)) {
+                                    detailMessageHtml = detailMessageHtml + messageNo + " : <span style='color:red'>" + messageObj[key] + "</span><br/>"
+                                }
+                            }
+                        }
+                    }
+                    getElm(detailResponseElmId).innerHTML = detailMessageHtml;
+                    //showElm(detailResponseElmId);
+
+                    if (typeof successCallback === "function") {
+                        successCallback()
+                    }
+                }
+                else if (result.hasOwnProperty('warn') === true) {
+
+                    showText(responseElm, result.warn, 'red')
+
+                    if (result.hasOwnProperty('warn') === true) {
+                        showText(responseWarnElm, result.warn, 'blue')
+                    }
+
+                    let detailMessageHtml = "";
+                    let messageNo = 0;
+                    if (result.hasOwnProperty('warnJson') === true) {
+                        let messageJson = result.warnJson;
+                        for (let i = 0; i < messageJson.length; i++) {
+                            messageNo++;
+                            let messageObj = messageJson[i];
+                            for (var key in messageObj) {
+                                if (messageObj.hasOwnProperty(key)) {
+                                    detailMessageHtml = detailMessageHtml + messageNo + " : <span style='color:blue'>" + messageObj[key] + "</span><br/>";
+                                }
+                            }
+                        }
+                    }
+                    if (result.hasOwnProperty('errorJson') === true) {
+                        let errorJson = result.errorJson
+                        for (let i = 0; i < errorJson.length; i++) {
+                            messageNo++
+                            let messageObj = errorJson[i]
+                            for (var key in messageObj) {
+                                if (messageObj.hasOwnProperty(key)) {
+                                    detailMessageHtml = detailMessageHtml + messageNo + " : <span style='color:red'>" + messageObj[key] + "</span><br/>"
+                                }
+                            }
+                        }
+                    }
+                    getElm(detailResponseElmId).innerHTML = detailMessageHtml;
+                    showElm(detailResponseElmId);
+                }
+                triggerEvent('appHubRepositorySyncImagePathRefresh', 'click');
+            }
+
+            callAssemblerApi(progressElmId, responseElmId, apiUrl, apiMethod, apiParams, refreshMode, refreshDomain, processReturn, successCallback, failureCallback, 0, "{{$AppSite}}", "{{$AppView}}", "AppHub", "")
+        }
+    }
+
+    function appHubClean(progressElmId, responseElmId, excludePublicMappedAppsVal, actionBtnElmId, successCallback, failureCallback) {
+        let id = window.ajaxid++
+        let responseElm = getElm(responseElmId)
+        let responseContainerElmId = responseElmId + "Container"
+        responseElm.textContent = ''
+        hideElm(responseContainerElmId)
+
+        let valid = true
+
+
+        if (valid == true) {
+            getElm(actionBtnElmId).setAttribute("disabled", true)
+
+            let refreshMode = ""
+            let refreshDomain = ""
+
+            let apiUrl = '/AppApi/HubApi'
+            let apiMethod = 'CleanHub'
+
+            let apiParams = {
+                "ExcludePublicMappedApps" : excludePublicMappedAppsVal
+            }
+
+            let processReturn = function (result, responseElmId, successCallback, failureCallback) {
+
+                let responseElm = getElm(responseElmId)
+
+                getElm(actionBtnElmId).removeAttribute("disabled")
+
+                if (result.hasOwnProperty('error') === true) {
+                    showText(responseElm, result.error, 'red')
+                }
+                else if (result.hasOwnProperty('message') === true) {
+
+                    showText(responseElm, result.message, 'green')
+
+                    if (typeof successCallback === "function") {
+                        successCallback()
+                    }
+                }
+                else if (result.hasOwnProperty('warn') === true) {
+
+                    showText(responseElm, result.warn, 'red')
+                }
+
+                triggerEvent('appHubRepositorySyncImagePathRefresh', 'click');
+            }
+
+            callAssemblerApi(progressElmId, responseElmId, apiUrl, apiMethod, apiParams, refreshMode, refreshDomain, processReturn, successCallback, failureCallback, 0, "{{$AppSite}}", "{{$AppView}}", "AppHub", "")
+        }
+    }
+
+</script>
