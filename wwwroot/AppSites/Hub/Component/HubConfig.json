@@ -1,8 +1,8 @@
 {
+  "ShowInitActions$": true,
   "ShowHubActions$": true,
   "ShowFlyActions$": true,
   "ShowKraftActions$": true,
-  "ShowWSLActions$": true,
   "RepositoryFolderList": [
     {
       "FolderName": "wwwsys",

@@ -1,0 +1,32 @@
+{{VIEWPLACEHOLDER}}
+
+<div style="position:relative;">
+    <button id="{{$RepositoryFolderSelectRefreshID}}" class="ar-sbutton ar-border" style="position:absolute;right:0px;top:10px;"
+            data-ar-action="refreshViewComponentHtml"
+            data-ar-progress="noprogress"
+            data-ar-response="noresponse"
+            data-ar-appsite="{{$AppSite}}"
+            data-ar-appview="{{$AppView}}"
+            data-ar-component="{{$ViewID}}"
+            data-ar-config="{{$RepositoryFolderSelectConfig}}">
+        &#x2714;
+    </button>
+</div>
+
+<div class="ar-flex-input-wrap ar-border">
+    <select id="{{$RepositoryFolderSelectID}}" class="ar-select ar-flex-item-stretch ar-border">
+        {{@HubRepositoryFolderList}}
+        <option {{@Selected}}selected="selected" {{ /Selected}} value="{{$RepositoryFolderValue}}">{{$RepositoryFolderName}}{{$RepositoryFolderSize}}{{$RepositoryFolderCount}}</option>
+        {{/HubRepositoryFolderList}}
+        {{^HubRepositoryFolderList}}
+        <option value="0">No Repository Folder Found. Select Repository</option>
+        {{/HubRepositoryFolderList}}
+    </select>
+</div>
+
+
+
+
+
+
+

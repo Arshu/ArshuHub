@@ -12,5 +12,6 @@
   "ComputeMinTimeValue$": 15,
   "ComputeMaxTimeValue$": 15,
   "BandwidthMinSizeValue$": 100,
-  "BandwidthMaxSizeValue$": 100
+  "BandwidthMaxSizeValue$": 100,
+  "HubPathPrefix$" : ""
 }

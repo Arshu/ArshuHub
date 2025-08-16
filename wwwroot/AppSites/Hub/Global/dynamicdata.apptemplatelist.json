@@ -1,4 +1,4 @@
 {
-  "AllowedRespositories": "arshubase",
+  "AllowedRespositories": "arshudata, arshuweb",
   "AppendSelectOption": false
 }

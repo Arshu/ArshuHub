@@ -1,6 +1,6 @@
 {{VIEWPLACEHOLDER}}
 
-<div style="margin:5px;position:relative;background-color:white;color:black;">
+<div style="margin: 10px auto; padding:5px; background-color:white;color:black;">
 
     <div style="margin:5px; padding:10px;text-align:center;display:none;" class="ar-notification" id="{{$ViewID}}ResponseContainer">
         <button class="ar-delete" onclick="hideElm('{{$ViewID}}ResponseContainer')"></button>
@@ -33,7 +33,7 @@
                 <td style="text-align:center;font-size:large;">
                     {{$HubMappingDomain}}
                     <div style="font-size:x-small">
-                        {{$HubRepositoryInfo}}
+                        {{$HubRepositoryInfo}} [{{$HubContentSizeText}}]
                     </div>
                 </td>
                 <td style="text-align:center;width:100px;">
@@ -64,12 +64,28 @@
         {
             if (window.location.hostname.toLowerCase() != 'localhost')
             {
-                let url = window.location.protocol + "//" + mappingDomainName;
-                if ((window.location.port != 80) && (window.location.port != 443))
+                let rootDomainWithoutSubDomain = mappingDomainName;
+                let subDomain = "";
+                let parts = mappingDomainName.split(".");
+                if (parts.length == 2)
                 {
-                    url = url + ":" + window.location.port;
+                    rootDomainWithoutSubDomain = parts[1];
+                    subDomain = parts[0];
                 }
-                window.open(url, '_blank');
+                else if (parts.length == 3)
+                {
+                    rootDomainWithoutSubDomain = parts[1] + "." + parts[2];
+                    subDomain = parts[0];
+                }
+                if (window.location.hostname.indexOf(rootDomainWithoutSubDomain) > -1)
+                {
+                    let url = window.location.protocol + "//" + mappingDomainName;
+                    if ((window.location.port != 80) && (window.location.port != 443))
+                    {
+                        url = url + ":" + window.location.port;
+                    }
+                    window.open(url, '_blank');
+                }
             }
         }
     }

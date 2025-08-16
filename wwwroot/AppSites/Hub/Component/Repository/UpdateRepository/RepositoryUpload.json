@@ -1,0 +1,16 @@
+{
+  "OwnerEmail$": "",
+  "OwnerPassword$": "",
+  "UploadWebAllowedExtension": "",
+  "MaxZipSize": "",
+  "RepositoryTypeList": [
+    {
+      "TypeName": "Base",
+      "TypeSelect": false
+    },
+    {
+      "TypeName": "Web",
+      "TypeSelect": true
+    }
+  ]
+}

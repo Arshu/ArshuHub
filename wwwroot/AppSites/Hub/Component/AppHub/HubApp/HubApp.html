@@ -1,13 +1,19 @@
 
-<div style="margin: 10px auto; padding:5px 0px; background-color: white;color:black;">
+<div style="margin: 10px; padding:5px; background-color: white;color:black;position:relative;">
 
-    <span style="font-size:xx-small">Allowed Extensions:<span style="color:blue;">{{$UploadWebAllowedExtension}}</span></span>
-    <span style="font-size:xx-small">Max File Size : <span style="color:red;">{{$MaxFileSize}}</span></span>
+    <button class="ar-sbutton ar-border" style="position:absolute;right:0px;top:0px;height:20px;font-size:xx-small;"
+            onclick="getElm('appHubAppName').value ='';">
+        &#10060;
+    </button>
+
+    <div style="font-size:x-small;color:red;">Use for Testing Only: All Apps will be deleted periodically (30 Mins)</div>
+    <div style="font-size:xx-small">Allowed Extensions:<span style="color:blue;">{{$UploadWebAllowedExtension}}</span></div>
+    <div style="font-size:xx-small">Max File Size : <span style="color:red;">{{$MaxFileSize}}</span></div>
     <div class="ar-flex-input-wrap" style="margin:0px 5px;position:relative;">
         <button class="ar-button ar-border-left" style="width: 100px;">
             Zip File <br /><span style="font-size:xx-small">Max Size : <span style="color:red;">{{$MaxZipSize}}</span></span>
         </button>
-        <label id="appHubAppUpdateZipFileLabel" title="Choose Zip file" for="appHubAppUpdateZipFile" style="font-size: 1.25em; font-weight: 700; color: black; display: inline-block;width:100%;position:absolute">Choose Zip file</label>
+        <label id="appHubAppUpdateZipFileLabel" title="Choose Zip file" for="appHubAppUpdateZipFile" style="font-size: 1.25em; font-weight: 700; color: black; display: inline-block;width:100%;position:absolute">Click to Choose Zip file</label>
         <div class="ar-flex-item-stretch ar-border-right" style="height: 39px;">
             <input id="appHubAppUpdateZipFile" name="appHubAppUpdateZipFile" class="ar-flex-item-stretch" style="width: 0.1px; height: 0.1px; opacity: 0; overflow: hidden; position: absolute; z-index: -1;" type="file">
             <script>
@@ -52,16 +58,18 @@
     </div>
 
     <div class="ar-flex-input-wrap" style="margin: 0px 5px;">
-        <button style="width: 40px; text-align:center;" class="ar-button ar-border-left" onclick="openAppHubUrl()">
+        <button style="width: 40px; text-align:center;" class="ar-button ar-border-left" onclick="openAppHubSubDomainUrl()">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
                 <path d="M11 3a1 1 0 100 2h2.586l-6.293 6.293a1 1 0 101.414 1.414L15 6.414V9a1 1 0 102 0V4a1 1 0 00-1-1h-5z" />
                 <path d="M5 5a2 2 0 00-2 2v8a2 2 0 002 2h8a2 2 0 002-2v-3a1 1 0 10-2 0v3H5V7h3a1 1 0 000-2H5z" />
             </svg>
         </button>
         <input id="appHubAppName" class="ar-input ar-border-top-bottom ar-flex-item-stretch" style="padding-left: 5px;" type="text" placeholder="Your Target App Name (Sub Domain)" value="" />
-        <button class="ar-button ar-border-right"
-                onclick="getElm('appHubAppName').value ='';">
-            &#10060;
+        <button style="width: 40px; text-align:center;" class="ar-button ar-border-right" onclick="{{@HubPathPrefix}}openAppHubSubDomainPathUrl(){{/HubPathPrefix}}{{^HubPathPrefix}}openAppHubSubDomainUrl(){{/HubPathPrefix}}">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                <path d="M11 3a1 1 0 100 2h2.586l-6.293 6.293a1 1 0 101.414 1.414L15 6.414V9a1 1 0 102 0V4a1 1 0 00-1-1h-5z" />
+                <path d="M5 5a2 2 0 00-2 2v8a2 2 0 002 2h8a2 2 0 002-2v-3a1 1 0 10-2 0v3H5V7h3a1 1 0 000-2H5z" />
+            </svg>
         </button>
     </div>
     <span style="font-size:xx-small; color:red;display:block;">All Apps can be overwritten/deleted by others unless owner details specified in advanced options</span>
@@ -97,7 +105,7 @@
         </div>
 
     </div>
-    
+
     <div id="appHubAppCreateResponseContainer" class="ar-notification" style="margin:5px; padding:10px;display:none;text-align:center;">
         <svg fill="currentColor" width="16px" height="16px" viewBox="0 0 32 32" xml:space="preserve"
              style="position:absolute;left:0px;top:0px;"
@@ -127,6 +135,9 @@
 
     </div>
 
+    <div style="margin: 10px 5px;" class="ar-border">
+        {{HubSampleList}}
+    </div>
 </div>
 
 <script type="text/javascript">
@@ -142,31 +153,19 @@
         return {"SelectedRepositoryPath": sourceNameTag};
     }
 
-    function openAppHubUrl()
+    function openAppHubSubDomainUrl()
     {
         let inputElm = getElm('appHubAppName');
         let appName = inputElm.value.trim();
         if ((appName.length > 0) && (appName.indexOf(".") == -1))
-        {
-            if (window.location.hostname.toLowerCase() == 'localhost')
-            {
-                let url = window.location.href;
-                if (url.endsWith("/") ==true)
-                {
-                    url = url + "reload";
-                }else
-                {
-                    url = url + "/reload";
-                }
-                window.open(url, '_blank');
-            }
-            else
+        {            
+            if (window.location.hostname.toLowerCase() != 'localhost')
             {
                 let host = window.location.host
                 let hostArr = host.split('.')
                 if (hostArr.length == 2)
                 {
-                    let url = window.location.protocol + "//" + appName + "." + window.location.host;                   
+                    let url = window.location.protocol + "//" + appName + "." + window.location.host;
                     window.open(url, '_blank');
                 }
                 else if (hostArr.length == 3)
@@ -175,6 +174,37 @@
                     if ((window.location.port != 80) && (window.location.port != 443))
                     {
                         url = url + ":" + window.location.port;
+                    }
+                    window.open(url, '_blank');
+                }
+            }
+        }
+    }
+
+    function openAppHubSubDomainPathUrl()
+    {
+        let inputElm = getElm('appHubAppName');
+        let appName = inputElm.value.trim();
+        if ((appName.length > 0) && (appName.indexOf(".") == -1))
+        {            
+            if (window.location.hostname.toLowerCase() != 'localhost')
+            {
+                let host = window.location.host
+                let hostArr = host.split('.')
+                if (hostArr.length == 2)
+                {
+                    let url = window.location.protocol + "//" + window.location.host + "{{$HubPathPrefix}}" + appName;
+                    window.open(url, '_blank');
+                }
+                else if (hostArr.length == 3)
+                {
+                    let url = window.location.protocol + "//" + appName + "." + hostArr[1] + "." + hostArr[2];
+                    if ((window.location.port != 80) && (window.location.port != 443))
+                    {
+                        url = url + ":" + window.location.port + "{{$HubPathPrefix}}" + appName;
+                    }else
+                    {
+                        url = url + "{{$HubPathPrefix}}" + appName
                     }
                     window.open(url, '_blank');
                 }
@@ -289,7 +319,7 @@
                     showText(responseElm, result.message, 'green')
 
                    if (result.hasOwnProperty('warn') === true) {
-                        showText(responseWarnElm, result.warn, 'blue')                       
+                        showText(responseWarnElm, result.warn, 'blue')
                     }
 
                     let detailMessageHtml = "";

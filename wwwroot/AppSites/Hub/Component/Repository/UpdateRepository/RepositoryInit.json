@@ -1,0 +1,14 @@
+{
+  "OwnerEmail$": "",
+  "OwnerPassword$": "",
+  "RepositoryTypeList": [
+    {
+      "TypeName": "Base",
+      "TypeSelect": false
+    },
+    {
+      "TypeName": "Web",
+      "TypeSelect": true
+    }
+  ]
+}

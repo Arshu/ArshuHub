@@ -1,0 +1,158 @@
+{{VIEWPLACEHOLDER}}
+
+<div style="margin: 10px auto; padding:5px; background-color:white;color:black;">
+
+    <div style="margin:5px; padding:10px;text-align:center;display:none;" class="ar-notification" id="{{$ViewID}}ResponseContainer">
+        <button class="ar-delete" onclick="hideElm('{{$ViewID}}ResponseContainer')"></button>
+        <div id="{{$ViewID}}Response"></div>
+    </div>
+
+    <table style="width:100%;" class="pure-table pure-table-bordered pure-table-striped">
+        {{HubSampleListHeader}}
+        <tbody>
+            {{@HubMappingList}}
+            <tr style="background-color: gray;">
+                <td colspan="5" style="padding-left:5px; font-size:medium;text-align:left;">
+                    {{$HubMappingTitle}}
+                </td>
+            </tr>
+            <tr style="background-color: gray;">
+                <td colspan="5" style="padding-left:5px;font-size:medium;text-align:left;">
+                    {{$HubMappingDescription}}
+                </td>
+            </tr>
+            <tr style="background-color: gray;">
+                <td style="width:40px;">
+                    <buttton onclick="openAppSubDomainUrl('{{$HubMappingDomain}}')" style="text-align:center;" class="ar-border" {{^HubMappingIsSample}}disabled="disabled"{{ /HubMappingIsSample}}>
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                            <path d="M11 3a1 1 0 100 2h2.586l-6.293 6.293a1 1 0 101.414 1.414L15 6.414V9a1 1 0 102 0V4a1 1 0 00-1-1h-5z" />
+                            <path d="M5 5a2 2 0 00-2 2v8a2 2 0 002 2h8a2 2 0 002-2v-3a1 1 0 10-2 0v3H5V7h3a1 1 0 000-2H5z" />
+                        </svg>
+                    </buttton>
+                </td>
+                <td style="text-align:center;font-size:x-small;">
+                    {{$HubMappingDomain}}
+                    <div style="font-size:xx-small">
+                        {{$HubRepositoryInfo}} [{{$HubContentSizeText}}]
+                    </div>
+                </td>
+                <td style="width:60px;">
+                    <button style="font-size:xx-small" class="ar-button ar-border" {{^HubMappingCanDownload}}disabled="disabled" {{ /HubMappingCanDownload}}>
+                        Download
+                    </button>
+                </td>
+                <td style="width:40px;">                    
+                    <buttton onclick="{{@HubPathPrefix}}openAppSubDomainPathUrl('{{$HubMappingDomain}}'){{/HubPathPrefix}}{{^HubPathPrefix}}openAppSubDomainUrl('{{$HubMappingDomain}}'){{/HubPathPrefix}}" style="text-align:center;width:40px;" class="ar-border" {{^HubMappingIsSample}}disabled="disabled" {{ /HubMappingIsSample}}>
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                            <path d="M11 3a1 1 0 100 2h2.586l-6.293 6.293a1 1 0 101.414 1.414L15 6.414V9a1 1 0 102 0V4a1 1 0 00-1-1h-5z" />
+                            <path d="M5 5a2 2 0 00-2 2v8a2 2 0 002 2h8a2 2 0 002-2v-3a1 1 0 10-2 0v3H5V7h3a1 1 0 000-2H5z" />
+                        </svg>
+                    </buttton>
+                </td>
+            </tr>
+            {{/HubMappingList}}
+            {{^HubMappingList}}
+            <tr style="background-color: gray;">
+                <td colspan="5" style="text-align:center;">
+                    No Sample Hub App's Found
+                </td>
+            </tr>
+            {{/HubMappingList}}
+        </tbody>
+        {{HubSampleListFooter}}
+    </table>
+
+</div>
+
+<script>
+
+    function openAppSubDomainUrl(mappingDomainName)
+    {
+        if ((mappingDomainName.trim().length > 0) && (mappingDomainName.indexOf(".") > -1))
+        {
+            if (window.location.hostname.toLowerCase() != 'localhost')
+            {
+                let rootDomainWithoutSubDomain = mappingDomainName;
+                let subDomain = "";
+                let parts = mappingDomainName.split(".");
+                if (parts.length == 3)
+                {
+                    rootDomainWithoutSubDomain = parts[1] + "." + parts[2];
+                    subDomain = parts[0];
+                }
+                if (window.location.hostname.indexOf(rootDomainWithoutSubDomain) > -1)
+                {
+                    let url = window.location.protocol + "//" + mappingDomainName;
+                    if ((window.location.port != 80) && (window.location.port != 443))
+                    {
+                        url = url + ":" + window.location.port;
+                    }
+                    window.open(url, '_blank');
+                }
+            }
+        }
+    }
+
+    function openAppSubDomainPathUrl(mappingDomainName)
+    {
+        if ((mappingDomainName.trim().length > 0) && (mappingDomainName.indexOf(".") > -1))
+        {           
+            if (window.location.hostname.toLowerCase() != 'localhost')
+            {
+                let rootDomainWithoutSubDomain = mappingDomainName;
+                let subDomain = "";
+                let parts = mappingDomainName.split(".");
+                if (parts.length >= 2)
+                {
+                     let lastIndex = parts.length - 1;
+                     let secondToLastIndex = parts.length - 2;
+                     rootDomainWithoutSubDomain = parts[secondToLastIndex] + "." + parts[lastIndex];
+                     subDomain = parts[0];
+                }
+               
+                if (window.location.hostname.indexOf(rootDomainWithoutSubDomain) > -1)
+                {
+                    let url = window.location.protocol + "//" + rootDomainWithoutSubDomain ;
+                    if (subDomain.length > 0)
+                    {
+                        if ((window.location.port != 80) && (window.location.port != 443))
+                        {
+                            url = url + ":" + window.location.port + "{{$HubPathPrefix}}" + subDomain;
+                        }
+                        else
+                        {
+                            url = url + "{{$HubPathPrefix}}" + subDomain
+                        }
+                        window.open(url, '_blank');
+                    }
+                }
+            }
+            else
+            {
+                let subDomain = "";
+                let parts = mappingDomainName.split(".");
+                if (parts.length >= 2)
+                {
+                    subDomain = parts[0];
+                }
+                                
+                let url = window.location.protocol + "//" + window.location.hostname ;
+                if (subDomain.length > 0)
+                {
+                    if ((window.location.port != 80) && (window.location.port != 443))
+                    {
+                        url = url + ":" + window.location.port + "{{$HubPathPrefix}}" + subDomain;
+                    }
+                    else
+                    {
+                        url = url + "{{$HubPathPrefix}}" + subDomain
+                    }
+                    window.open(url, '_blank');
+                }
+                
+            }
+        }
+    }
+    
+</script>
+

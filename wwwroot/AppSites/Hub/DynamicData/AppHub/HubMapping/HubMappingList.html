@@ -12,21 +12,17 @@
         <tbody>
             {{@HubMappingList}}
             <tr style="background-color: gray;">
-                <td style="padding-left: 5px;text-align:center;">
-                    <button class="ar-button ar-border" style="width:100%;" onclick="setMappingDetails('{{$HubMappingDomain}}', '{{$HubRepositoryInfo}}', '{{$HubMappingFolder}}', '{{$HubMappingIsPublic}}', '{{$HubMappingCanDownload}}', '{{$HubMappingEnabled}}', '{{$HubMappingTitle}}', '{{$HubMappingDescription}}')">
-                        {{$HubMappingDomain}}
+                <td style="text-align:center;min-width:100px;">
+                    <button class="ar-button ar-border" style="width:100%;" onclick="setMappingDetails('{{$HubMappingDomain}}', '{{$HubRepositoryInfo}}', '{{$HubMappingFolder}}', '{{$HubMappingIsPublic}}', '{{$HubMappingIsSample}}', '{{$HubMappingAutoDelete}}', '{{$HubMappingCanDownload}}', '{{$HubMappingEnabled}}', '{{$HubMappingTitle}}', '{{$HubMappingDescription}}')">
                         <div style="font-size:xx-small">
-                            Enabled:{{$HubMappingEnabled}}, IsPublic:{{$HubMappingIsPublic}}
-                        </div>
-                        <div style="font-size:xx-small">
-                            CanDownload: {{$HubMappingCanDownload}}
-                        </div>
+                            Enabled:{{$HubMappingEnabled}}
+                        </div>                        
                     </button>
                 </td>
-                <td style="text-align:center;">
+                <td style="text-align:center;" colspan="2">
                     {{$HubRepositoryInfo}}
                     <div style="font-size:xx-small">
-                        {{$HubMappingFolder}}
+                        {{$HubMappingFolder}} [{{$HubContentSizeText}}]
                     </div>
                     <div style="font-size:xx-small; text-align:justify;">
                         Title: {{$HubMappingTitle}}
@@ -34,6 +30,32 @@
                     <div style="font-size:xx-small; text-align:justify;">
                         Description: {{$HubMappingDescription}}
                     </div>
+                </td>
+            </tr>
+            <tr style="background-color: gray;border-bottom:1px solid black;">
+                <td>
+                    <button style="font-size:xx-small;width:100%;" class="ar-button ar-border" {{^HubMappingCanDownload}}disabled="disabled" {{ /HubMappingCanDownload}}>
+                        Download
+                    </button>
+                </td>
+                <td>
+                    <div style="font-size:xx-small; text-align:center;">
+                        {{$HubMappingDomain}}
+                        <div style="font-size:xx-small">
+                            IsPublic:{{$HubMappingIsPublic}}, IsSample:{{$HubMappingIsSample}}
+                        </div>
+                        <div style="font-size:xx-small">
+                            AutoDelete: {{$HubMappingAutoDelete}}, CanDownload: {{$HubMappingCanDownload}}
+                        </div>
+                    </div>
+                </td>
+                <td style="width:40px;">
+                    <buttton onclick="{{@HubPathPrefix}}openMappingDomainPathUrl('{{$HubMappingDomain}}'){{/HubPathPrefix}}{{^HubPathPrefix}}openMappingDomainUrl('{{$HubMappingDomain}}'){{/HubPathPrefix}}" style="text-align:center;width:40px;" class="ar-border" {{^HubMappingIsSample}}disabled="disabled" {{ /HubMappingIsSample}}>
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                            <path d="M11 3a1 1 0 100 2h2.586l-6.293 6.293a1 1 0 101.414 1.414L15 6.414V9a1 1 0 102 0V4a1 1 0 00-1-1h-5z" />
+                            <path d="M5 5a2 2 0 00-2 2v8a2 2 0 002 2h8a2 2 0 002-2v-3a1 1 0 10-2 0v3H5V7h3a1 1 0 000-2H5z" />
+                        </svg>
+                    </buttton>
                 </td>
             </tr>
             {{/HubMappingList}}
@@ -50,3 +72,81 @@
 
 </div>
 
+<script>
+
+    function openMappingDomainUrl(mappingDomainName)
+    {
+        if ((mappingDomainName.trim().length > 0) && (mappingDomainName.indexOf(".") > -1))
+        {
+            if (window.location.hostname.toLowerCase() != 'localhost')
+            {
+                let url = window.location.protocol + "//" + mappingDomainName;
+                if ((window.location.port != 80) && (window.location.port != 443))
+                {
+                    url = url + ":" + window.location.port;
+                }
+                window.open(url, '_blank');
+            }
+        }
+    }
+
+    function openMappingDomainPathUrl(mappingDomainName)
+    {
+        if ((mappingDomainName.trim().length > 0) && (mappingDomainName.indexOf(".") > -1))
+        {
+            if (window.location.hostname.toLowerCase() != 'localhost')
+            {
+                let rootDomainWithoutSubDomain = mappingDomainName;
+                let subDomain = "";
+                let parts = mappingDomainName.split(".");
+                if (parts.length >= 2)
+                {
+                     let lastIndex = parts.length - 1;
+                     let secondToLastIndex = parts.length - 2;
+                     rootDomainWithoutSubDomain = parts[secondToLastIndex] + "." + parts[lastIndex];
+                     subDomain = parts[0];
+                }
+
+                let url = window.location.protocol + "//" + rootDomainWithoutSubDomain ;
+                if (subDomain.length > 0)
+                {
+                    if ((window.location.port != 80) && (window.location.port != 443))
+                    {
+                        url = url + ":" + window.location.port + "{{$HubPathPrefix}}" + subDomain;
+                    }
+                    else
+                    {
+                        url = url + "{{$HubPathPrefix}}" + subDomain
+                    }
+                    window.open(url, '_blank');
+                }
+            }
+            else
+            {
+                let rootDomainWithoutSubDomain = mappingDomainName;
+                let subDomain = "";
+                let parts = mappingDomainName.split(".");
+                if (parts.length == 2)
+                {
+                     rootDomainWithoutSubDomain = parts[1];
+                     subDomain = parts[0];
+                }
+                
+                let url = window.location.protocol + "//" + rootDomainWithoutSubDomain ;
+                if (subDomain.length > 0)
+                {
+                    if ((window.location.port != 80) && (window.location.port != 443))
+                    {
+                        url = url + ":" + window.location.port + "{{$HubPathPrefix}}" + subDomain;
+                    }
+                    else
+                    {
+                        url = url + "{{$HubPathPrefix}}" + subDomain
+                    }
+                    window.open(url, '_blank');
+                }
+            }
+        }
+    }
+
+</script>

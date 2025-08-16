@@ -1,5 +1,5 @@
 
-<div style="margin: 10px auto; padding:5px 0px; background-color: white;color:black;">
+<div style="margin: 10px 0px 10px 0px; padding:5px 0px; background-color: white;color:black;">
 
     <fieldset class="ar-border" style="margin: 5px;padding:10px 0px;border-width:2px;">
         <legend style="text-align:center;cursor:pointer;"
@@ -9,7 +9,7 @@
                 data-ar-appsite="{{$AppSite}}"
                 data-ar-appview="{{$AppView}}"
                 data-ar-component="HubAccessConfig"
-                data-ar-postcall="toggleElm('hubaccessconfig');clearAccessDetails();">
+                data-ar-postcall="toggleElm('hubaccessconfig');hideElm('hubCleanDiv');hideElm('hubSyncDiv');clearAccessDetails();">
             Hub Access <span id="showHubAccessProgress"></span>
         </legend>
 
@@ -19,46 +19,61 @@
 
     </fieldset>
 
+    <fieldset class="ar-border" style="margin: 5px;padding:10px 0px;border-width:2px;">
+        <legend style="text-align:center;cursor:pointer;" onclick="hideElm('hubaccessconfig');toggleElm('hubCleanDiv');hideElm('hubSyncDiv');">Hub Clean</legend>
+        <div id="hubCleanDiv" style="display:none;">
+            {{HubClean}}
+        </div>
+    </fieldset>
+
+    <fieldset class="ar-border" style="margin: 5px;padding:10px 0px;border-width:2px;">
+        <legend style="text-align:center;cursor:pointer;" onclick="hideElm('hubaccessconfig');hideElm('hubCleanDiv');toggleElm('hubSyncDiv');">Hub Sync</legend>
+        <div id="hubSyncDiv" style="display:none;">
+            {{HubSync}}
+        </div>
+    </fieldset>
+
 </div>
 
 <div style="margin: 0 auto; padding:5px 0px; position: relative; overflow: hidden; background-color: white;color:black;">
 
     <fieldset class="ar-border" style="margin: 5px;padding:10px 0px;border-width:2px;">
-        <legend style="text-align:center;cursor:pointer;" onclick="setTimeout(clearSyncAccessInfo, 1000); triggerEvent('appSyncAccessSelectRefresh', 'click'); toggleElm('hubSyncDiv');hideElm('hubDeleteDiv'); hideElm('hubFolderDiv');">Hub Repository Sync</legend>
-        <div id="hubSyncDiv" style="display:none;">
-            {{HubRepositorySync}}
+        <legend style="text-align:center;cursor:pointer;" onclick="setTimeout(clearSyncAccessInfo, 1000); triggerEvent('appSyncAccessSelectRefresh', 'click'); toggleElm('repositorySyncDiv');hideElm('repositoryDeleteDiv'); hideElm('repositoryFolderDiv');">Repository Sync</legend>
+        <div id="repositorySyncDiv" style="display:none;">
+            {{RepositorySync}}
         </div>
     </fieldset>
 
     <fieldset class="ar-border" style="margin: 5px;padding:10px 0px;border-width:2px;">
-        <legend style="text-align: center; cursor: pointer;" onclick="triggerEvent('appHubDeleteRepositorySourceImagePathRefresh', 'click'); hideElm('hubSyncDiv'); toggleElm('hubDeleteDiv'); hideElm('hubFolderDiv');">Hub Repository Delete</legend>
-        <div id="hubDeleteDiv" style="display:none;">
-            {{HubRepositoryDelete}}
+        <legend style="text-align: center; cursor: pointer;" onclick="triggerEvent('appRepositoryDeleteSourceImagePathRefresh', 'click'); hideElm('repositorySyncDiv'); toggleElm('repositoryDeleteDiv'); hideElm('repositoryFolderDiv');">Repository Delete</legend>
+        <div id="repositoryDeleteDiv" style="display:none;">
+            {{RepositoryDelete}}
         </div>
     </fieldset>
 
     <fieldset class="ar-border" style="margin: 5px;padding:10px 0px;border-width:2px;">
-        <legend style="text-align: center; cursor: pointer;" onclick="triggerEvent('appHubSyncRepositorySourceImagePathRefresh', 'click'); hideElm('hubSyncDiv'); hideElm('hubDeleteDiv'); toggleElm('hubFolderDiv');">Hub Repository Folder Sync</legend>
-        <div id="hubFolderDiv" style="display:none;">
-            {{HubRepositoryFolderSync}}
+        <legend style="text-align: center; cursor: pointer;" onclick="triggerEvent('appRepositoryFolderSourceImagePathRefresh', 'click'); hideElm('repositorySyncDiv'); hideElm('repositoryDeleteDiv'); toggleElm('repositoryFolderDiv');">Repository Folder Sync</legend>
+        <div id="repositoryFolderDiv" style="display:none;">
+            {{RepositoryFolderSync}}
         </div>
     </fieldset>
 
 </div>
 
+{{@ShowInitActions}}
 <div style="margin: 10px auto; padding:5px 0px; position: relative; overflow: hidden; background-color: white;color:black;">
-
-    <fieldset class="ar-border" style="margin: 5px;padding:10px 0px;border-width:2px;">
-        <legend style="text-align: center; cursor: pointer;" onclick="triggerEvent('appHubRepositoryUpdateSourceImagePathRefresh', 'click'); toggleElm('updateRepositoryDiv'); hideElm('initRepositoryDiv');hideElm('initUpdateRepositoryDiv');">Repository Update</legend>
-        <div id="updateRepositoryDiv" style="display:none;">
-            {{RepositoryUpload}}
-        </div>
-    </fieldset>
 
     <fieldset class="ar-border" style="margin: 5px;padding:10px 0px;border-width:2px;">
         <legend style="text-align: center; cursor: pointer;" onclick="triggerEvent('appHubRepositoryInitSourceImagePathRefresh', 'click'); hideElm('updateRepositoryDiv'); toggleElm('initRepositoryDiv');hideElm('initUpdateRepositoryDiv'); ">Repository Init</legend>
         <div id="initRepositoryDiv" style="display:none;">
             {{RepositoryInit}}
+        </div>
+    </fieldset>
+
+    <fieldset class="ar-border" style="margin: 5px;padding:10px 0px;border-width:2px;">
+        <legend style="text-align: center; cursor: pointer;" onclick="triggerEvent('appHubRepositoryUpdateSourceImagePathRefresh', 'click'); toggleElm('updateRepositoryDiv'); hideElm('initRepositoryDiv');hideElm('initUpdateRepositoryDiv');">Repository Update</legend>
+        <div id="updateRepositoryDiv" style="display:none;">
+            {{RepositoryUpload}}
         </div>
     </fieldset>
 
@@ -70,6 +85,7 @@
     </fieldset>
 
 </div>
+{{/ShowInitActions}}
 
 {{@ShowHubActions}}
 <div style="margin: 10px auto; padding:5px 0px; position: relative; overflow: hidden; background-color: white;color:black;">
@@ -117,14 +133,12 @@
     <fieldset class="ar-border" style="margin: 5px;padding:10px 0px;border-width:2px;">
         <legend style="text-align:center;cursor:pointer;" onclick="hideElm('unikraftInstanceDiv');toggleElm('unikraftServiceDiv');">Unikraft Service</legend>
         <div id="unikraftServiceDiv" style="display:none;">
-            
         </div>
     </fieldset>
 
     <fieldset class="ar-border" style="margin: 5px;padding:10px 0px;border-width:2px;">
         <legend style="text-align:center;cursor:pointer;" onclick="toggleElm('unikraftInstanceDiv');hideElm('unikraftServiceDiv');">Unikraft Instance</legend>
         <div id="unikraftInstanceDiv" style="display:none;">
-
         </div>
     </fieldset>
 

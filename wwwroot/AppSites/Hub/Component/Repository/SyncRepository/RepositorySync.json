@@ -1,0 +1,17 @@
+{
+  "TestImages": [
+    "arshuweb:latest",
+    "arshudata:latest",
+    "arshusite:latest"
+  ],
+  "RepositoryTypeList": [
+    {
+      "TypeName": "Base",
+      "TypeSelect": true
+    },
+    {
+      "TypeName": "Web",
+      "TypeSelect": false
+    }
+  ]
+}

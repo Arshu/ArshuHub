@@ -1,24 +1,23 @@
 {
   "WebRootName": "wwwroot",
   "ConfigLogLevel": "Error,Warn",
-  "ConfigPorts": false,
+  "ConfigPorts": true,
   "ConfigHttps": true,
 
   "CreateResourceConfig": false,
   "ReadApiConfigPatternList": "*",
-  "CreateApiConfigPatternList": "Server,Metrics",
+  "CreateApiConfigPatternList": "App,Metrics,Hub",
   "AllowApiConfigUpdate": true,
-  "DisablePowChecking": true,
-  "DisablePowCheckingPerPage": true,
+  "DisablePowChecking": false,
+  "DisablePowCheckingPerPage": false,
 
-  "LoadArshuFramework": true,
-  "LoadAppHub": true,
+  "LoadFileChanges": false,
   "LoadAppData": true,
   "LoadAppConfig": true,
   "LoadAppEmbed": false,
   "LoadAppFolder": true,
   "LoadAppPap": true,
-  "LoadFileChanges": false,
+  "LoadAppHub": true,
 
   "RealtimeAppSites": "",
   "StaticAppSites": "Index, Account, Test, Hub",
@@ -27,10 +26,11 @@
   "HubUseWebFolder": true,
   "HubRootDirName": "wwwhub",
   "HubWebDirName": "App_Data/Hub",
+  "HubPathPrefix": "/s~",
 
   "ContextJson": {
     "WebMetricsID": "aeadbc05-9dfe-4ec5-bf95-5a9aa13b2d7a",
-    "PageTitle": "Application Base",
+    "PageTitle": "Arshu Hub",
 
     "ShowIntroTip": true,
     "ShowFrameworkToolbar": true,
@@ -46,42 +46,37 @@
   },
 
   "AppAssets": [
-    {
-      "AssetTypeName": "Arshu.Hub.AssetRegister",
-      "AssetDll": "Arshu.Hub.dll",
-      "IsEnabled": true
-    }
   ],
 
   "AppServices": [
     {
-      "RegisterTypeName": "Arshu.AppCore.App.Register.WebRegister",
+      "RegisterTypeName": "Arshu.App.Register.WebRegister",
       "RegisterDll": "Arshu.AppCore.dll",
       "IsEnabled": true
     },
     {
-      "RegisterTypeName": "Arshu.AppCore.App.Register.VueRegister",
+      "RegisterTypeName": "Arshu.App.Register.VueRegister",
       "RegisterDll": "Arshu.AppCore.dll",
       "IsEnabled": true
     },
     {
-      "RegisterTypeName": "Arshu.AppServer.App.Register.MetricsRegister",
+      "RegisterTypeName": "Arshu.App.Register.MetricsRegister",
       "RegisterDll": "Arshu.AppServer.dll",
       "IsEnabled": true
     },
     {
-      "RegisterTypeName": "Arshu.AppServer.App.Register.ServerRegister",
+      "RegisterTypeName": "Arshu.App.Register.ServerRegister",
       "RegisterDll": "Arshu.AppServer.dll",
       "IsEnabled": true
     },
     {
-      "RegisterTypeName": "Arshu.AppHub.App.Register.HubRegister",
+      "RegisterTypeName": "Arshu.App.Register.HubRegister",
       "RegisterDll": "Arshu.AppHub.dll",
       "IsEnabled": true
     }
   ],
 
-  "AutoStopCheckTime": 2,
+  "AutoStopCheckTime": 0,
   "LogServerMetrics": true,
   "LogUsageTracking": true,
   "LogUsageTimeInSecs": 30,
@@ -111,7 +106,7 @@
   "AppProviders": [
 
     {
-      "RegisterTypeName": "Arshu.Data.Register.DataRegister",
+      "RegisterTypeName": "Arshu.App.Register.DataRegister",
       "RegisterDll": "Arshu.Data.dll",
       "IsEnabled": false,
       "ProviderTypeName": "Microsoft.Data.Sqlite.SqliteFactory",
@@ -136,18 +131,11 @@
   "PackResource": true,
   "PackConfig": true,
   "PackData": true,
+  "PackPrefix": "Arshu.Hub",
+  "PackVersion": "1.0",
   "PackAppSites": "Index, Hub",
   "PackAppConfigs": "App_Config, AppApi",
-  "PackAppDatas": "Cert, SSL, Roles, Members",
-
-  "PackName": "Arshu.Hub.1.0.pap",
-  "PackDescription": "Arshu.Hub for Managing Application Hub",
-  "PackResourceName": "Arshu.Hub.1.0.pap",
-  "PackResourceDescription": "Resource of Arshu.Hub for Managing Application Hub",
-  "PackConfigName": "Arshu.Hub.1.0.pap",
-  "PackConfigDescription": "Config of Arshu.Hub for Managing Application Hub",
-  "PackDataName": "Arshu.Hub.1.0.pap",
-  "PackDataDescription": "Data of Arshu.Hub for Managing Application Hub",
+  "PackAppDatas": "Cert, SSL, Roles, Members, hubaccess",
 
   "PackAppSubFolderPath": "A0",
   "PackResourceSubFolderPath": "A0",

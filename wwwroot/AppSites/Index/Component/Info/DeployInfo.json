@@ -2,23 +2,23 @@
   "DeployList": [
     {
       "DeployTitle": "Baremetal",
-      "DeployInfo": "OVHCloud SGD 16$",
+      "DeployInfo": "OVHCloud SGD 16$/Month",
       "ProviderLink": "https://www.ovhcloud.com/",
-      "DeploySpec": "SystemD Socket Activated <br/> Shutdown in 5 Secs Idle",
+      "DeploySpec": "SystemD Socket Activated <br/> App Shutdown in ~5 Secs Idle",
       "DeployLink": "ownlah.com"
     },
     {
       "DeployTitle": "MicroVM",
-      "DeployInfo": "Fly.IO, USD 1.94",
+      "DeployInfo": "Fly.IO, USD 1.94*2++/Month",
       "ProviderLink": "https://fly.io/",
-      "DeploySpec": "Fly Auto Activated <br/> Shutdown in 5 Secs Idle",
+      "DeploySpec": "Fly Auto Activated <br/> App Shutdown in ~5 Secs Idle",
       "DeployLink": "pagelah.com"
     },
     {
       "DeployTitle": "Unikernel",
-      "DeployInfo": "Unikraft.Cloud, USD 19$",
+      "DeployInfo": "Unikraft.Cloud, USD 19$/Month",
       "ProviderLink": "https://unikraft.cloud/",
-      "DeploySpec": "Unikraft Auto Activated <br/> Scale to Zero in 1 Sec Idle",
+      "DeploySpec": "Unikraft Auto Activated <br/> App Shutdown in ~5 Secs Idle <br/> Scale to Zero in 60 Sec Idle",
       "DeployLink": "linklah.com"
     }
   ]
